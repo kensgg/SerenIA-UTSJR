@@ -81,14 +81,16 @@ export default function Dashboard() {
     }
   }
 
-  const obtenerUltimoPuntaje = (idCuestionario) => {
-    const mapa = { estres: 'estr', ansiedad: 'ansiedad', depresion: 'depresi' };
-    const termino = mapa[idCuestionario];
-    const registro = historial.find(r => 
-      (r.cuestionarios?.nombre?.toLowerCase() || '').includes(termino)
-    );
-    return registro ? registro.puntaje : 0;
-  };
+    const obtenerUltimoPuntaje = (idCuestionario) => {
+      const mapa = { estres: 'estr', ansiedad: 'ansiedad', depresion: 'depresi' };
+      const termino = mapa[idCuestionario];
+
+      const registro = [...historial]
+        .sort((a, b) => new Date(b.fecha_respuesta) - new Date(a.fecha_respuesta))
+        .find(r => (r.cuestionarios?.nombre?.toLowerCase() || '').includes(termino));
+
+      return registro ? registro.puntaje : 0;
+    };
 
   const buildDataset = (keyword) => {
     return historial

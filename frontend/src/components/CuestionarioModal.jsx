@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 
-// ─── DATOS DE LOS CUESTIONARIOS ───────────────────────────────────────────────
 
 const BAI_OPCIONES = [
   { label: 'En absoluto', value: 0 },
