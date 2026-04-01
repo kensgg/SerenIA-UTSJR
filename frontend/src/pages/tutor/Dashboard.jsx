@@ -95,6 +95,7 @@ export default function TutorDashboard() {
     }))
   }, [alumnosProcesados])
 
+  // Lógica para filtrar alumnos del popup
   const alumnosEnPopup = useMemo(() => {
     if (!popupGrafica) return []
     const key = { ansiedad: 'nivelAns', estres: 'nivelEst', depresion: 'nivelDep' }[popupGrafica.tipo]
@@ -161,6 +162,7 @@ export default function TutorDashboard() {
               </div>
             </div>
 
+            {/* SECCIÓN GRÁFICA CON POPUP RESTAURADO */}
             <div className="lg:col-span-9 bg-white rounded-[35px] p-8 border border-gray-50 shadow-sm relative">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Salud General</h3>
@@ -176,28 +178,44 @@ export default function TutorDashboard() {
                 </Suspense>
               </div>
 
+              {/* POPUP DE LISTADO DE ALUMNOS (RESTAURADO) */}
               {popupGrafica && (
-                <div className="absolute top-6 right-6 w-80 bg-white/95 backdrop-blur-xl rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.08)] z-50 border border-white overflow-hidden animate-in fade-in zoom-in-95 duration-300">
-                  <div className="p-6 pb-4 flex justify-between items-start border-b border-gray-50" style={{ background: `${TIPO_COLORS[popupGrafica.tipo]?.bar}15` }}>
+                <div className="absolute top-6 right-6 w-80 bg-white/95 backdrop-blur-xl rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-50 border border-white overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                  <div className="p-5 pb-4 flex justify-between items-start border-b border-gray-50" style={{ background: `${TIPO_COLORS[popupGrafica.tipo]?.bar}10` }}>
                     <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="w-2 h-2 rounded-full" style={{ background: TIPO_COLORS[popupGrafica.tipo]?.bar }} />
-                        <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: TIPO_COLORS[popupGrafica.tipo]?.text }}>{TIPO_COLORS[popupGrafica.tipo]?.label}</p>
-                      </div>
-                      <p className="text-2xl font-black text-gray-800 tracking-tighter">{alumnosEnPopup.length} <span className="text-xs font-bold text-gray-400 tracking-normal uppercase">en Nivel {popupGrafica.nivel}</span></p>
+                      <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: TIPO_COLORS[popupGrafica.tipo]?.text }}>
+                        {TIPO_COLORS[popupGrafica.tipo]?.label} · {popupGrafica.nivel}
+                      </p>
+                      <p className="text-2xl font-black text-gray-800 tracking-tighter">
+                        {alumnosEnPopup.length} <span className="text-[10px] text-gray-400 font-bold uppercase tracking-normal">Alumnos</span>
+                      </p>
                     </div>
-                    <button onClick={() => setPopupGrafica(null)} className="p-2 bg-white/50 rounded-full text-gray-400 hover:text-gray-600 transition-colors"><X size={14} /></button>
+                    <button onClick={() => setPopupGrafica(null)} className="p-1.5 bg-white rounded-full shadow-sm text-gray-400 hover:text-gray-600 transition-colors">
+                      <X size={14} />
+                    </button>
                   </div>
-                  <div className="p-4 max-h-64 overflow-y-auto space-y-2">
+                  <div className="p-3 max-h-60 overflow-y-auto space-y-1">
                     {alumnosEnPopup.map(a => (
-                      <div key={a.id} onClick={() => { setAlumnoSeleccionado(a); setPopupGrafica(null); }} className="flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50 cursor-pointer border border-transparent hover:border-gray-100 transition-all group">
+                      <div 
+                        key={a.id} 
+                        onClick={() => { setAlumnoSeleccionado(a); setPopupGrafica(null); }} 
+                        className="flex items-center justify-between p-2.5 rounded-xl hover:bg-gray-50 cursor-pointer transition-all group"
+                      >
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-black" style={{ background: `${TIPO_COLORS[popupGrafica.tipo]?.bar}25`, color: TIPO_COLORS[popupGrafica.tipo]?.text }}>{a.nombre?.[0]}</div>
-                          <div><p className="text-xs font-black text-gray-800 group-hover:text-[#8BA888]">{a.ape_p} {a.nombre}</p><p className="text-[9px] font-bold text-gray-400">{a.correo}</p></div>
+                          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-black" style={{ background: `${TIPO_COLORS[popupGrafica.tipo]?.bar}20`, color: TIPO_COLORS[popupGrafica.tipo]?.text }}>
+                            {a.nombre?.[0]}
+                          </div>
+                          <div>
+                            <p className="text-xs font-black text-gray-800 group-hover:text-[#8BA888]">{a.ape_p} {a.nombre}</p>
+                            <p className="text-[9px] text-gray-400 font-bold">{a.correo}</p>
+                          </div>
                         </div>
-                        <ChevronRight size={14} className="text-gray-200 group-hover:text-[#8BA888]" />
+                        <ChevronRight size={12} className="text-gray-200 group-hover:text-[#8BA888]" />
                       </div>
                     ))}
+                    {alumnosEnPopup.length === 0 && (
+                      <p className="text-center py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Sin alumnos</p>
+                    )}
                   </div>
                 </div>
               )}
