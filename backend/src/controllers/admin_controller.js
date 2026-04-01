@@ -1,7 +1,6 @@
 import supabase from '../db/supabaseClient.js'
 import bcrypt from 'bcrypt'
 
-// ── Tutores ──────────────────────────────────────────
 
 export const listarTutores = async (req, res) => {
     try {
@@ -70,7 +69,6 @@ export const desactivarTutor = async (req, res) => {
     try {
         const tutor_id = req.params.id
 
-        // Evitar que el admin se desactive a sí mismo
         if (tutor_id === req.user.id)
             return res.status(400).json({ error: 'No puedes desactivarte a ti mismo' })
 
@@ -218,8 +216,6 @@ export const editarCarrera = async (req, res) => {
         res.status(500).json({ error: err.message })
     }
 }
-
-// ── Estadísticas generales ───────────────────────────
 
 export const estadisticasGenerales = async (req, res) => {
     try {

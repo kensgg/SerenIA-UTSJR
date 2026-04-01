@@ -18,7 +18,6 @@ export default function Login() {
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const validateForm = () => {
-    // Quinta mejora: Validaciones de Regexp y longitud
     const emailRegex = /^[a-zA-Z0-9._%+-]+@utsjr\.edu\.mx$/;
     if (!emailRegex.test(form.correo)) {
       setError('El correo debe ser institucional (@utsjr.edu.mx)');
@@ -77,7 +76,6 @@ export default function Login() {
         </div>
 
         <div className="mb-8 text-center">
-          {/* Tercera mejora: Badge de acceso más notorio */}
           <div className={`inline-flex items-center gap-2 px-6 py-2 rounded-full border-2 mb-4 transition-colors duration-300 ${
             isTutorMode ? 'bg-gray-800 border-gray-800 text-white' : 'bg-[#8BA888]/10 border-[#8BA888] text-[#8BA888]'
           }`}>
@@ -93,7 +91,6 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">
-            {/* Primera mejora: Textos grises más oscuros (text-gray-500) */}
             <label className="text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] ml-5">Correo Institucional</label>
             <input
               type="email"
@@ -145,7 +142,6 @@ export default function Login() {
         </form>
 
         <div className="mt-8 text-center min-h-[20px]">
-          {/* Cuarta mejora: El registro desaparece si es Tutor */}
           {!isTutorMode ? (
             <Link to="/register" className="text-[10px] font-black text-gray-500 hover:text-[#8BA888] transition-colors uppercase tracking-widest">
               ¿No tienes cuenta? <span className="underline underline-offset-4 text-gray-700 hover:text-[#8BA888]">Regístrate</span>
@@ -158,17 +154,17 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Segundo cambio: Botón flotante simplificado con icono + SerenIA */}
+      {/* Botón flotante responsivo corregido */}
       <button
         onClick={() => { setIsTutorMode(!isTutorMode); setError(''); }}
-        className={`fixed bottom-10 right-10 flex items-center gap-3 px-6 py-4 rounded-[24px] shadow-2xl transition-all duration-500 active:scale-90 z-[100] border border-white/50 backdrop-blur-sm ${
+        className={`fixed bottom-6 right-6 md:bottom-10 md:right-10 flex items-center justify-center gap-3 p-4 md:px-6 md:py-4 rounded-full md:rounded-[24px] shadow-2xl transition-all duration-500 active:scale-90 z-[100] border border-white/50 backdrop-blur-sm ${
           isTutorMode ? 'bg-[#8BA888] text-white' : 'bg-white text-gray-800'
         }`}
       >
         <div className={`p-2 rounded-xl ${isTutorMode ? 'bg-white/20' : 'bg-[#F9F9F7]'}`}>
-          {isTutorMode ? <User size={18} /> : <ShieldCheck size={18} />}
+          {isTutorMode ? <User size={20} /> : <ShieldCheck size={20} />}
         </div>
-        <div className="text-left">
+        <div className="hidden md:block text-left">
           <p className="text-[11px] font-black uppercase tracking-tighter">
             {isTutorMode ? 'SerenIA Alumnos' : 'SerenIA Tutores'}
           </p>

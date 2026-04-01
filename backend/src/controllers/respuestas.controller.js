@@ -35,25 +35,25 @@ export const guardarRespuesta = async (req, res) => {
 
         let textoSugerencia = "";
 
-        // 4. Lógica de IA con GROQ (Niveles Alto y Crítico)
         if (nivel === 'alto' || nivel === 'critico') {
             try {
-                const prompt = `Actúa como un psicólogo clínico cálido y humano. 
-                Un estudiante tiene un nivel ${nivel.toUpperCase()} de ${nombresCuestionarios[cuestionario_id]} (${puntaje}/${max} puntos).
-                
-                Escribe un párrafo breve (máximo 280 caracteres) que incluya:
-                1. Una frase de validación empática.
-                2. Sugiere 2 actividades prácticas (como respiración diafragmática o técnica 5-4-3-2-1).
-                3. Cierra diciendo: "${nivel === 'critico' ? 'Es urgente que acudas hoy mismo a orientación psicopedagógica.' : 'Te sugiero platicar con tu tutor pronto.'}"
-                
-                IMPORTANTE: No uses negritas, ni asteriscos (*), ni listas de puntos. Solo texto fluido.`;
+            const prompt = `Eres un psicólogo clínico universitario evaluando a un estudiante.
+
+            Situación: nivel ${nivel.toUpperCase()} de ${nombresCuestionarios[cuestionario_id]} (${puntaje}/${max} pts)
+
+            Escríbele directamente al estudiante en segunda persona. El mensaje debe:
+            - Reconocer cómo se puede estar sintiendo con ${nombresCuestionarios[cuestionario_id]} en nivel ${nivel}
+            - Mencionar una técnica específica por nombre (elige la más adecuada para ${nombresCuestionarios[cuestionario_id]}: respiración 4-7-8, técnica 5-4-3-2-1, journaling, mindfulness, ejercicio físico, higiene del sueño)
+            - Explicar brevemente cómo aplicar esa técnica en 1 frase
+            ${nivel === 'critico' 
+                ? '- Cerrar indicándole que acuda hoy mismo a orientación psicopedagógica' 
+                : '- Cerrar animándole a hablar con su tutor si lo necesita'}
+
+            Máximo 300 caracteres. Texto fluido, sin listas, sin asteriscos, tono cálido y directo.`;
                 const completion = await groq.chat.completions.create({
                     messages: [{ role: "user", content: prompt }],
-                    // Cambia el anterior por uno de estos:
-                    model: "llama-3.3-70b-versatile", // Es el más inteligente actualmente
-                    // O si prefieres uno más ligero y rápido:
-                    // model: "llama-3.1-8b-instant", 
-                    temperature: 0.6,
+                    model: "llama-3.3-70b-versatile", 
+                    temperature: 0.8,
                     max_tokens: 300,
                 });
 
