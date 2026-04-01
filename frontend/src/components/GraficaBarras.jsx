@@ -1,7 +1,13 @@
 import { useEffect, useRef } from 'react'
-import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip } from 'chart.js'
+import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js'
 
-Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip)
+Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend)
+
+const COLORS = {
+  ansiedad: '#FFD18A', 
+  estres: '#FFADAD',   
+  depresion: '#A0A4FF', 
+}
 
 export default function GraficaBarras({ data, onBarClick }) {
   const canvasRef = useRef(null)
@@ -19,41 +25,56 @@ export default function GraficaBarras({ data, onBarClick }) {
           {
             label: 'Ansiedad',
             data: data.map(d => d.ansiedad),
-            backgroundColor: '#F59E0B',
-            borderRadius: 8,
-            borderSkipped: false,
+            backgroundColor: COLORS.ansiedad,
+            hoverBackgroundColor: '#F59E0B',
+            borderRadius: 4, // Radio reducido para que se vea más cuadrado
+            barThickness: 28, // Un poco más anchas para acentuar la forma
           },
           {
             label: 'Estrés',
             data: data.map(d => d.estres),
-            backgroundColor: '#F87171',
-            borderRadius: 8,
-            borderSkipped: false,
+            backgroundColor: COLORS.estres,
+            hoverBackgroundColor: '#EF4444',
+            borderRadius: 4,
+            barThickness: 28,
           },
           {
             label: 'Depresión',
             data: data.map(d => d.depresion),
-            backgroundColor: '#818CF8',
-            borderRadius: 8,
-            borderSkipped: false,
+            backgroundColor: COLORS.depresion,
+            hoverBackgroundColor: '#6366F1',
+            borderRadius: 4,
+            barThickness: 28,
           },
         ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        onClick: (_, elements) => {
+        layout: { padding: { top: 10 } },
+        onClick: (event, elements) => {
           if (!elements.length) return
           const { index, datasetIndex } = elements[0]
-          // Mismo orden que dataGrafica: Bajo=0, Moderado=1, Alto=2, Crítico=3
           const niveles = ['Bajo', 'Moderado', 'Alto', 'Crítico']
-          const tipos   = ['ansiedad', 'estres', 'depresion']
-          console.log('Click → nivel:', niveles[index], 'tipo:', tipos[datasetIndex])
+          const tipos = ['ansiedad', 'estres', 'depresion']
           onBarClick({ nivel: niveles[index], tipo: tipos[datasetIndex] })
         },
         plugins: {
           legend: { display: false },
           tooltip: {
+            enabled: true,
+            backgroundColor: '#FFFFFF',
+            titleColor: '#1F2937',
+            titleFont: { size: 13, weight: '800' },
+            bodyColor: '#6B7280',
+            bodyFont: { size: 12, weight: '600' },
+            padding: 12,
+            cornerRadius: 8, // Tooltip también más cuadradito
+            borderColor: '#F3F4F6',
+            borderWidth: 1,
+            displayColors: true,
+            boxPadding: 8,
+            usePointStyle: true,
             callbacks: {
               label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y} alumnos`,
             },
@@ -64,16 +85,16 @@ export default function GraficaBarras({ data, onBarClick }) {
             grid: { display: false },
             border: { display: false },
             ticks: {
-              font: { size: 11, weight: '700', family: 'inherit' },
-              color: '#6B7280',
+              font: { size: 11, weight: '800' },
+              color: '#9CA3AF',
             },
           },
           y: {
-            grid: { color: '#F3F4F6' },
+            grid: { color: '#F3F4F6', drawTicks: false },
             border: { display: false },
             ticks: {
-              font: { size: 11, weight: '700', family: 'inherit' },
-              color: '#6B7280',
+              font: { size: 11, weight: '700' },
+              color: '#9CA3AF',
               stepSize: 1,
             },
           },

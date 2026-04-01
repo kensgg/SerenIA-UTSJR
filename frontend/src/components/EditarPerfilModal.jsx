@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { X, Save, GraduationCap, Users, UserCircle2, Loader2 } from 'lucide-react';
-import { getGrupos, getCarreras } from '../api/auth.api'; // Reutilizamos tus funciones de auth.api
+import { X, Save, GraduationCap, Users, UserCircle2, Loader2, AlertCircle } from 'lucide-react';
+import { getGrupos, getCarreras } from '../api/auth.api';
 
 const GENEROS = [
   { label: 'Masculino', value: 'masculino' },
@@ -10,8 +10,7 @@ const GENEROS = [
 
 export default function EditarPerfilModal({ perfil, onClose, onUpdate }) {
   const [formData, setFormData] = useState({
-    carrera: perfil?.carrera || '', // Nombre de la carrera si lo necesitas
-    carrera_id: perfil?.carrera_id || '', // ID para filtrar grupos
+    carrera_id: perfil?.carrera_id || '',
     grupo_id: perfil?.grupo_id || '',
     genero: perfil?.genero || ''
   });
@@ -20,15 +19,16 @@ export default function EditarPerfilModal({ perfil, onClose, onUpdate }) {
   const [grupos, setGrupos] = useState([]);
   const [loadingGrupos, setLoadingGrupos] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
 
-  // 1. Cargar Carreras al montar el modal
   useEffect(() => {
+    let isMounted = true;
     getCarreras()
-      .then(({ data }) => setCarreras(Array.isArray(data) ? data : []))
-      .catch(console.error);
+      .then(({ data }) => { if (isMounted) setCarreras(Array.isArray(data) ? data : []); })
+      .catch(() => setError('Error al cargar catálogo de carreras'));
+    return () => { isMounted = false; };
   }, []);
 
-  // 2. Cargar Grupos cuando cambie la carrera_id
   useEffect(() => {
     if (!formData.carrera_id) {
       setGrupos([]);
@@ -36,17 +36,23 @@ export default function EditarPerfilModal({ perfil, onClose, onUpdate }) {
     }
     setLoadingGrupos(true);
     getGrupos(formData.carrera_id)
-      .then(({ data }) => {
-        setGrupos(Array.isArray(data) ? data : []);
-      })
-      .catch(console.error)
+      .then(({ data }) => setGrupos(Array.isArray(data) ? data : []))
+      .catch(() => setError('No se pudieron obtener los grupos'))
       .finally(() => setLoadingGrupos(false));
   }, [formData.carrera_id]);
 
+  const hasChanges = () => {
+    return (
+      formData.carrera_id !== (perfil?.carrera_id || '') ||
+      formData.grupo_id !== (perfil?.grupo_id || '') ||
+      formData.genero !== (perfil?.genero || '')
+    );
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
+    setError('');
     
-    // Si cambia la carrera, reseteamos el grupo seleccionado
     if (name === 'carrera_id') {
       setFormData(prev => ({ ...prev, [name]: value, grupo_id: '' }));
     } else {
@@ -54,20 +60,29 @@ export default function EditarPerfilModal({ perfil, onClose, onUpdate }) {
     }
   };
 
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSaving(true);
     
+    if (!hasChanges()) {
+      setError('No hay cambios nuevos para guardar');
+      return;
+    }
+
+    if (!formData.grupo_id || !formData.genero) {
+      setError('Favor de completar los campos requeridos');
+      return;
+    }
+
+    setSaving(true);
     try {
-      // Enviamos solo los campos que existen físicamente en la tabla de Supabase
       await onUpdate({
-        carrera_id: Number(formData.carrera_id), // Enviamos el ID numérico
-        grupo_id: formData.grupo_id,             // UUID del grupo
+        carrera_id: Number(formData.carrera_id),
+        grupo_id: formData.grupo_id,
         genero: formData.genero
       });
       onClose();
-    } catch (error) {
-      console.error("Error al guardar:", error);
+    } catch (err) {
+      setError('Error al actualizar el servidor');
     } finally {
       setSaving(false);
     }
@@ -75,7 +90,7 @@ const handleSubmit = async (e) => {
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-[#1C2D6E]/20 backdrop-blur-md animate-in fade-in duration-300">
-      <div className="bg-white rounded-[45px] shadow-2xl w-full max-w-md overflow-hidden border border-white relative">
+      <div className="bg-white rounded-[45px] shadow-2xl w-full max-w-md overflow-hidden border border-white relative animate-in zoom-in-95 duration-300">
         <div className="p-10">
           
           <div className="flex justify-between items-center mb-10">
@@ -90,7 +105,6 @@ const handleSubmit = async (e) => {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             
-            {/* Género */}
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-[9px] font-black text-gray-300 uppercase tracking-widest ml-4">
                 <UserCircle2 size={12} /> Género
@@ -99,14 +113,13 @@ const handleSubmit = async (e) => {
                 name="genero"
                 value={formData.genero}
                 onChange={handleChange}
-                className="w-full px-6 py-4 bg-[#F9F9F7] rounded-[22px] font-bold text-gray-600 outline-none border border-transparent focus:border-[#8BA888]/20 transition-all appearance-none cursor-pointer"
+                className={`w-full px-6 py-4 bg-[#F9F9F7] rounded-[22px] font-bold text-gray-600 outline-none border transition-all appearance-none cursor-pointer ${error && !formData.genero ? 'border-rose-300' : 'border-transparent focus:border-[#8BA888]/20'}`}
               >
                 <option value="">Seleccionar Género</option>
                 {GENEROS.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
               </select>
             </div>
 
-            {/* Carrera */}
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-[9px] font-black text-gray-300 uppercase tracking-widest ml-4">
                 <GraduationCap size={12} /> Carrera
@@ -122,7 +135,6 @@ const handleSubmit = async (e) => {
               </select>
             </div>
 
-            {/* Grupo (Dinámico) */}
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-[9px] font-black text-gray-300 uppercase tracking-widest ml-4">
                 <Users size={12} /> Grupo
@@ -133,8 +145,9 @@ const handleSubmit = async (e) => {
                   value={formData.grupo_id}
                   onChange={handleChange}
                   disabled={!formData.carrera_id || loadingGrupos}
-                  className={`w-full px-6 py-4 rounded-[22px] font-bold outline-none transition-all appearance-none cursor-pointer border border-transparent
-                    ${formData.carrera_id ? 'bg-[#E8EDDF] text-[#8BA888]' : 'bg-gray-100 text-gray-300 cursor-not-allowed'}`}
+                  className={`w-full px-6 py-4 rounded-[22px] font-bold outline-none transition-all appearance-none cursor-pointer border
+                    ${formData.carrera_id ? 'bg-[#E8EDDF] text-[#8BA888] border-transparent' : 'bg-gray-100 text-gray-300 cursor-not-allowed border-transparent'}
+                    ${error && !formData.grupo_id && formData.carrera_id ? 'border-rose-300' : ''}`}
                 >
                   <option value="">
                     {loadingGrupos ? 'Cargando grupos...' : !formData.carrera_id ? 'Primero elige carrera' : 'Selecciona tu Grupo'}
@@ -147,13 +160,23 @@ const handleSubmit = async (e) => {
               </div>
             </div>
 
-            {/* Botón Guardar */}
+            {error && (
+              <div className="bg-rose-50 text-rose-500 text-[10px] font-black uppercase p-4 rounded-[20px] text-center border border-rose-100 flex items-center justify-center gap-2 animate-in slide-in-from-top-1">
+                <AlertCircle size={14} />
+                {error}
+              </div>
+            )}
+
             <button 
               type="submit"
-              disabled={saving || !formData.grupo_id}
-              className="w-full py-5 bg-gray-800 hover:bg-[#8BA888] text-white rounded-[25px] font-black uppercase text-[11px] tracking-[0.2em] transition-all shadow-lg shadow-gray-100 active:scale-95 flex items-center justify-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed mt-4"
+              disabled={saving || !hasChanges()}
+              className="w-full py-5 bg-gray-800 hover:bg-[#8BA888] text-white rounded-[25px] font-black uppercase text-[11px] tracking-[0.2em] transition-all shadow-lg shadow-gray-100 active:scale-95 flex items-center justify-center gap-3 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed mt-4"
             >
-              {saving ? 'Guardando cambios...' : <><Save size={18} /> Guardar Perfil</>}
+              {saving ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <><Save size={18} /> {hasChanges() ? 'Guardar Cambios' : 'Sin cambios'}</>
+              )}
             </button>
 
           </form>
