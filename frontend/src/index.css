@@ -64,7 +64,6 @@ body {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  /* Elimina border-inline si no quieres la línea gris de los lados */
 }
 
 h1,

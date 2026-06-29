@@ -158,7 +158,8 @@ export default function CuestionarioModal({ tipo, onClose, onSubmit }) {
       } else {
         puntajeFinal = Object.values(respuestas).reduce((acc, curr) => acc + curr, 0);
       }
-      const res = await onSubmit(dataCfg.id_db, puntajeFinal);
+      // Pasar las respuestas individuales como detalle compacto { "0": 2, "1": 0, ... }
+      const res = await onSubmit(dataCfg.id_db, puntajeFinal, respuestas);
       setResultado({
         puntaje: puntajeFinal,
         nivel: res.data.nivel,

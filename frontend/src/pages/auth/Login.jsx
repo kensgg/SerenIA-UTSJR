@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { loginAlumno, loginTutor } from '../../api/auth.api';
 import { jwtDecode } from 'jwt-decode';
-import { Eye, EyeOff, User, ShieldCheck, ArrowRight, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, User, ShieldCheck, ArrowRight, AlertCircle, XCircle } from 'lucide-react';
 
 export default function Login() {
   const { login } = useAuth();
@@ -17,6 +17,7 @@ export default function Login() {
   const [attempts, setAttempts] = useState(0);
   const [isLocked, setIsLocked] = useState(false);
 
+  // Sistema de bloqueo por intentos
   useEffect(() => {
     if (attempts >= 5) {
       setIsLocked(true);
@@ -34,7 +35,8 @@ export default function Login() {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: name === 'correo' ? value.trim() : value }));
     
-    if (errors[name]) {
+    // Limpiar error específico al escribir para mejorar UX
+    if (errors[name] || errors.general) {
       setErrors(prev => ({ ...prev, [name]: null, general: null }));
     }
   };
@@ -46,13 +48,11 @@ export default function Login() {
     if (!form.correo) {
       newErrors.correo = 'El correo es obligatorio';
     } else if (!emailRegex.test(form.correo)) {
-      newErrors.correo = 'Use @utsjr.edu.mx';
+      newErrors.correo = 'Use un correo @utsjr.edu.mx';
     }
 
     if (!form.password) {
       newErrors.password = 'Ingrese su contraseña';
-    } else if (form.password.length < 8) {
-      newErrors.password = 'Mínimo 8 caracteres';
     }
 
     setErrors(newErrors);
@@ -62,7 +62,6 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading || isLocked) return;
-
     if (!validateForm()) return;
 
     setLoading(true);
@@ -78,14 +77,21 @@ export default function Login() {
 
       const routes = { admin: '/admin', tutor: '/tutor/dashboard', alumno: '/dashboard' };
       navigate(routes[decoded.rol] || '/dashboard');
+
     } catch (err) {
       setAttempts(prev => prev + 1);
       const status = err.response?.status;
-      setErrors({ 
-        general: status === 401 || status === 404 
-          ? 'Correo o contraseña incorrectos' 
-          : 'Error de conexión con el servidor' 
-      });
+      
+      // LOGICA DE ERRORES ESPECIFICOS
+      if (status === 404) {
+        setErrors({ correo: 'Este correo no está registrado en el sistema' });
+      } else if (status === 401) {
+        setErrors({ password: 'La contraseña es incorrecta' });
+      } else if (status === 403) {
+        setErrors({ general: 'Acceso denegado o cuenta suspendida' });
+      } else {
+        setErrors({ general: 'Error de conexión con el servidor' });
+      }
     } finally {
       setLoading(false);
     }
@@ -94,8 +100,9 @@ export default function Login() {
   const inputClass = (fieldName) => `
     w-full px-7 py-4 bg-[#F9F9F7] rounded-[22px] outline-none border transition-all text-sm font-bold
     ${errors[fieldName] 
-      ? 'border-rose-400 bg-rose-50/30 text-rose-900 placeholder:text-rose-300' 
+      ? 'border-rose-400 bg-rose-50/50 text-rose-900 placeholder:text-rose-300' 
       : 'border-transparent focus:border-[#8BA888]/40 focus:bg-white text-gray-700 placeholder:text-gray-400'}
+    disabled:opacity-50
   `;
 
   const InputError = ({ message }) => message ? (
@@ -106,6 +113,7 @@ export default function Login() {
 
   return (
     <div className="fixed inset-0 w-screen h-screen bg-[#F9F9F7] flex items-center justify-center overflow-hidden font-sans p-6">
+      {/* Background Orbs */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#E8EDDF] rounded-full blur-[120px] opacity-50" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#8BA888]/10 rounded-full blur-[120px] opacity-50" />
 
@@ -120,7 +128,7 @@ export default function Login() {
         </header>
 
         <div className="mb-8 text-center">
-          <div className={`inline-flex items-center gap-2 px-6 py-2 rounded-full border-2 mb-4 transition-colors duration-300 ${
+          <div className={`inline-flex items-center gap-2 px-6 py-2 rounded-full border-2 mb-4 transition-all duration-500 ${
             isTutorMode ? 'bg-gray-800 border-gray-800 text-white' : 'bg-[#8BA888]/10 border-[#8BA888] text-[#8BA888]'
           }`}>
              {isTutorMode ? <ShieldCheck size={14}/> : <User size={14}/>}
@@ -134,6 +142,7 @@ export default function Login() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+          {/* Campo Correo */}
           <div className="space-y-1">
             <label className="text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] ml-5">Correo Institucional</label>
             <input
@@ -141,14 +150,14 @@ export default function Login() {
               name="correo"
               value={form.correo}
               onChange={handleChange}
-              disabled={isLocked}
-              required
+              disabled={isLocked || loading}
               placeholder="usuario@utsjr.edu.mx"
               className={inputClass('correo')}
             />
             <InputError message={errors.correo} />
           </div>
 
+          {/* Campo Password */}
           <div className="space-y-1 relative">
             <label className="text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] ml-5">Contraseña</label>
             <div className="relative">
@@ -157,8 +166,7 @@ export default function Login() {
                 name="password"
                 value={form.password}
                 onChange={handleChange}
-                disabled={isLocked}
-                required
+                disabled={isLocked || loading}
                 placeholder="••••••••"
                 className={inputClass('password')}
               />
@@ -172,11 +180,22 @@ export default function Login() {
               </button>
             </div>
             <InputError message={errors.password} />
+            {!isTutorMode && (
+              <div className="text-right pr-2">
+                <Link
+                  to="/forgot-password"
+                  className="text-[9px] font-black text-gray-400 hover:text-[#8BA888] transition-colors uppercase tracking-widest"
+                >
+                  ¿Olvidaste tu contraseña?
+                </Link>
+              </div>
+            )}
           </div>
 
+          {/* Error General / Bloqueo */}
           {errors.general && (
             <div className="flex items-center justify-center gap-2 bg-rose-50 text-rose-600 text-[10px] font-black uppercase p-4 rounded-[20px] text-center tracking-widest border border-rose-100 animate-in fade-in zoom-in-95 duration-300">
-              <AlertCircle size={14} />
+              <XCircle size={14} />
               {errors.general}
             </div>
           )}
@@ -186,24 +205,25 @@ export default function Login() {
             disabled={loading || isLocked}
             className="w-full bg-[#8BA888] hover:bg-gray-800 text-white font-black py-5 rounded-[22px] shadow-lg shadow-[#8BA888]/20 transition-all duration-300 active:scale-95 disabled:opacity-50 mt-4 uppercase tracking-[0.2em] text-[11px] flex items-center justify-center gap-2"
           >
-            {loading ? 'Verificando...' : isLocked ? 'Bloqueado' : 'Entrar al Sistema'}
+            {loading ? 'Verificando...' : isLocked ? 'Sistema Bloqueado' : 'Entrar al Sistema'}
             {!loading && !isLocked && <ArrowRight size={14} />}
           </button>
         </form>
 
-        <footer className="mt-8 text-center min-h-[20px]">
+        <footer className="mt-8 text-center">
           {!isTutorMode ? (
             <Link to="/register" className="text-[10px] font-black text-gray-500 hover:text-[#8BA888] transition-colors uppercase tracking-widest">
               ¿No tienes cuenta? <span className="underline underline-offset-4 text-gray-700 hover:text-[#8BA888]">Regístrate</span>
             </Link>
           ) : (
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-              Acceso restringido
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest italic">
+              — SerenIA Management System —
             </p>
           )}
         </footer>
       </div>
 
+      {/* Toggle Mode Button */}
       <button
         onClick={() => { 
           setIsTutorMode(!isTutorMode); 

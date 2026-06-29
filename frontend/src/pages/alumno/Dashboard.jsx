@@ -60,9 +60,9 @@ export default function Dashboard() {
 
   useEffect(() => { cargarDatosIniciales() }, [])
 
-  const handleSubmit = async (id_db, puntaje) => {
+  const handleSubmit = async (id_db, puntaje, detalle) => {
     try {
-      const response = await submitCuestionario(id_db, puntaje);
+      const response = await submitCuestionario(id_db, puntaje, detalle);
       refrescarDatosSilenciosamente(); 
       return response; 
     } catch (error) {

@@ -7,12 +7,12 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 export const guardarRespuesta = async (req, res) => {
     try {
         const alumno_id = req.user.id;
-        const { cuestionario_id, puntaje } = req.body;
+        const { cuestionario_id, puntaje, detalle } = req.body;
 
-        // 1. Guardar en el Historial
+        // 1. Guardar en el Historial (incluye detalle de respuestas por pregunta)
         const { error: errResp } = await supabase
             .from('respuestas')
-            .insert([{ alumno_id, cuestionario_id, puntaje }]);
+            .insert([{ alumno_id, cuestionario_id, puntaje, detalle: detalle ?? null }]);
 
         if (errResp) return res.status(400).json(errResp);
 
@@ -102,6 +102,7 @@ export const historialRespuestas = async (req, res) => {
             .from('respuestas')
             .select(`
                 puntaje,
+                detalle,
                 fecha_respuesta,
                 cuestionarios (
                     nombre

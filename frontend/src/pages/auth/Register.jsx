@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { registerAlumno, getGrupos } from '../../api/auth.api';
 import axiosClient from '../../api/axiosClient';
-import { ArrowLeft, AlertCircle } from 'lucide-react';
+import { ArrowLeft, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 const GENEROS = [
   { label: 'Masculino', value: 'masculino' },
@@ -30,15 +30,20 @@ export default function Register() {
     let isMounted = true;
     axiosClient.get('/publico/carreras')
       .then((res) => { if (isMounted) setCarreras(res.data); })
-      .catch(() => setErrors({ general: 'Servicio no disponible' }));
+      .catch(() => setErrors({ general: 'Servicio no disponible temporalmente' }));
     return () => { isMounted = false; };
   }, []);
 
   useEffect(() => {
-    if (!form.carrera_id) { setGrupos([]); return; }
+    if (!form.carrera_id) { 
+      setGrupos([]); 
+      setForm(prev => ({ ...prev, grupo_id: '' }));
+      return; 
+    }
     setLoadingGrupos(true);
     getGrupos(form.carrera_id)
       .then(({ data }) => setGrupos(Array.isArray(data) ? data : []))
+      .catch(() => setErrors(prev => ({ ...prev, general: 'Error al cargar grupos' })))
       .finally(() => setLoadingGrupos(false));
   }, [form.carrera_id]);
 
@@ -55,33 +60,36 @@ export default function Register() {
       [name]: name === 'correo' ? val.trim().toLowerCase() : val 
     }));
 
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: null }));
+    if (errors[name] || errors.general) {
+      setErrors(prev => ({ ...prev, [name]: null, general: null }));
     }
   };
 
   const validateForm = () => {
     const newErrors = {};
-    const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ]{3,}(?:\s[a-zA-ZáéíóúÁÉÍÓÚñÑ]{2,})*$/;
+    const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@utsjr\.edu\.mx$/;
-    const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    
+    // NUEVA VALIDACIÓN: Mínimo 8 caracteres y al menos una Mayúscula
+    const hasUpperCase = /[A-Z]/.test(form.password);
+    const hasMinLength = form.password.length >= 8;
 
-    if (!nameRegex.test(form.nombre.trim())) newErrors.nombre = 'Mínimo 3 letras';
+    if (!nameRegex.test(form.nombre.trim())) newErrors.nombre = 'Nombre inválido';
     if (!nameRegex.test(form.ape_p.trim())) newErrors.ape_p = 'Apellido requerido';
     if (!nameRegex.test(form.ape_m.trim())) newErrors.ape_m = 'Apellido requerido';
     
-    if (!emailRegex.test(form.correo)) newErrors.correo = 'Use @utsjr.edu.mx';
+    if (!emailRegex.test(form.correo)) newErrors.correo = 'Debe ser @utsjr.edu.mx';
     
-    if (form.password.length < 8) {
+    if (!hasMinLength) {
       newErrors.password = 'Mínimo 8 caracteres';
-    } else if (!passRegex.test(form.password)) {
-      newErrors.password = 'Falta Mayús., Minús. o Número';
+    } else if (!hasUpperCase) {
+      newErrors.password = 'Falta una letra mayúscula';
     }
 
     if (!form.genero) newErrors.genero = 'Requerido';
     if (!form.cuatrimestre) newErrors.cuatrimestre = 'Requerido';
     if (!form.carrera_id) newErrors.carrera_id = 'Requerido';
-    if (!form.grupo_id) newErrors.grupo_id = 'Requerido';
+    if (!form.grupo_id) newErrors.grupo_id = 'Seleccione un grupo';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -102,7 +110,8 @@ export default function Register() {
       });
       navigate('/login');
     } catch (err) {
-      setErrors({ general: err.response?.data?.error || 'Error al registrar' });
+      const msg = err.response?.data?.error || err.response?.data?.message || 'Error al registrar';
+      setErrors({ general: msg });
     } finally {
       setLoading(false);
     }
@@ -116,7 +125,7 @@ export default function Register() {
 
   const inputClass = (fieldName) => `
     w-full px-6 py-4 bg-[#F9F9F7] rounded-[22px] outline-none border transition-all text-sm font-bold
-    ${errors[fieldName] ? 'border-rose-400 bg-rose-50/30 text-rose-900 placeholder:text-rose-300' : 'border-transparent focus:border-[#8BA888]/20 focus:bg-white text-gray-600 placeholder:text-gray-300'}
+    ${errors[fieldName] ? 'border-rose-400 bg-rose-50/50 text-rose-900 placeholder:text-rose-300' : 'border-transparent focus:border-[#8BA888]/20 focus:bg-white text-gray-600 placeholder:text-gray-300'}
   `;
 
   return (
@@ -124,11 +133,11 @@ export default function Register() {
       <div className="absolute top-0 right-0 w-[30%] h-[30%] bg-[#E8EDDF] rounded-full blur-[100px] opacity-60 -z-10" />
       <div className="absolute bottom-0 left-0 w-[30%] h-[30%] bg-[#8BA888]/10 rounded-full blur-[100px] opacity-60 -z-10" />
 
-      <div className="w-full max-w-[640px] bg-white rounded-[45px] border border-gray-100 shadow-[0_25px_70px_-15px_rgba(0,0,0,0.05)] p-10 md:p-14 relative my-10">
+      <div className="w-full max-w-[640px] bg-white rounded-[45px] border border-gray-100 shadow-[0_25px_70px_-15px_rgba(0,0,0,0.05)] p-10 md:p-14 relative my-10 animate-in fade-in zoom-in-95 duration-500">
         
-        <Link to="/login" className="absolute top-10 left-10 text-gray-300 hover:text-[#8BA888] transition-colors">
+        <button onClick={() => navigate('/login')} className="absolute top-10 left-10 text-gray-300 hover:text-[#8BA888] transition-colors">
           <ArrowLeft size={20} />
-        </Link>
+        </button>
 
         <header className="text-center mb-12">
           <h1 className="text-4xl font-black tracking-tighter text-gray-800">
@@ -140,8 +149,9 @@ export default function Register() {
         </header>
 
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+          {/* Información Personal */}
           <div className="space-y-3">
-            <label className="text-[9px] font-black text-gray-300 uppercase tracking-widest ml-5">Información Personal</label>
+            <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-5">Información Personal</label>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
                 <input type="text" name="nombre" placeholder="Nombre(s)" value={form.nombre} onChange={handleChange} className={inputClass('nombre')} />
@@ -158,21 +168,23 @@ export default function Register() {
             </div>
           </div>
 
+          {/* Credenciales */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-[9px] font-black text-gray-300 uppercase tracking-widest ml-5">Correo UTSJR</label>
+              <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-5">Correo UTSJR</label>
               <input type="email" name="correo" value={form.correo} placeholder="ejemplo@utsjr.edu.mx" onChange={handleChange} className={inputClass('correo')} />
               <InputError message={errors.correo} />
             </div>
             <div className="space-y-1">
-              <label className="text-[9px] font-black text-gray-300 uppercase tracking-widest ml-5">Contraseña</label>
-              <input type="password" name="password" value={form.password} placeholder="••••••••" onChange={handleChange} className={inputClass('password')} />
+              <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-5">Contraseña</label>
+              <input type="password" name="password" value={form.password} placeholder="Mín. 8 caracteres y una Mayús." onChange={handleChange} className={inputClass('password')} />
               <InputError message={errors.password} />
             </div>
           </div>
 
+          {/* Datos Académicos */}
           <div className="space-y-3 pt-2">
-            <label className="text-[9px] font-black text-gray-300 uppercase tracking-widest ml-5 text-center block">Datos Académicos</label>
+            <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-5 text-center block">Datos Académicos</label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <select name="genero" value={form.genero} onChange={handleChange} className={inputClass('genero')}>
@@ -189,6 +201,7 @@ export default function Register() {
                 <InputError message={errors.cuatrimestre} />
               </div>
             </div>
+            
             <div>
               <select name="carrera_id" value={form.carrera_id} onChange={handleChange} className={inputClass('carrera_id')}>
                 <option value="">Selecciona tu Carrera</option>
@@ -196,9 +209,18 @@ export default function Register() {
               </select>
               <InputError message={errors.carrera_id} />
             </div>
+
             {form.carrera_id && (
-              <div>
-                <select name="grupo_id" value={form.grupo_id} onChange={handleChange} className="w-full px-6 py-4 bg-[#E8EDDF] rounded-[22px] outline-none text-[#8BA888] font-black text-sm border border-[#8BA888]/10 cursor-pointer">
+              <div className="animate-in slide-in-from-top-2 duration-300">
+                <select 
+                  name="grupo_id" 
+                  value={form.grupo_id} 
+                  onChange={handleChange} 
+                  className={`w-full px-6 py-4 rounded-[22px] outline-none font-black text-sm border transition-all cursor-pointer ${
+                    loadingGrupos ? 'bg-gray-100 text-gray-400 animate-pulse' : 'bg-[#E8EDDF] text-[#8BA888] border-[#8BA888]/10'
+                  }`}
+                  disabled={loadingGrupos}
+                >
                   <option value="">{loadingGrupos ? 'Buscando grupos...' : 'Selecciona tu Grupo'}</option>
                   {grupos.map(g => <option key={g.id} value={g.id}>{g.nombre}</option>)}
                 </select>
@@ -207,8 +229,10 @@ export default function Register() {
             )}
           </div>
 
+          {/* Error General */}
           {errors.general && (
-            <div className="bg-rose-50 text-rose-500 text-[10px] font-black uppercase p-4 rounded-[20px] text-center border border-rose-100">
+            <div className="bg-rose-50 text-rose-500 text-[10px] font-black uppercase p-4 rounded-[20px] text-center border border-rose-100 flex items-center justify-center gap-2">
+              <AlertCircle size={14} />
               {errors.general}
             </div>
           )}

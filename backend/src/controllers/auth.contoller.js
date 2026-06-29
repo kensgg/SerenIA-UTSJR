@@ -1,6 +1,8 @@
 import supabase from '../db/supabaseClient.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+import { sendPasswordResetEmail } from '../services/email.service.js';
 
 // --- LOGIN ---
 export const login = async (req, res) => {
@@ -75,5 +77,123 @@ export const register = async (req, res) => {
 
     } catch (err) {
         res.status(500).json({ error: 'No se pudo completar el registro' });
+    }
+};
+
+// --- FORGOT PASSWORD ---
+export const forgotPassword = async (req, res) => {
+    try {
+        const { correo } = req.body;
+
+        if (!correo) {
+            return res.status(400).json({ error: 'El correo es obligatorio' });
+        }
+
+        // Verificar que el alumno exista (sin revelar si existe o no por seguridad)
+        const { data: alumno } = await supabase
+            .from('alumnos')
+            .select('correo')
+            .eq('correo', correo.toLowerCase().trim())
+            .single();
+
+        // Respuesta genérica para evitar enumeración de correos
+        if (!alumno) {
+            return res.status(200).json({
+                message: 'Si ese correo está registrado, recibirás un enlace en breve.'
+            });
+        }
+
+        // Generar token seguro de un solo uso
+        const token = crypto.randomBytes(32).toString('hex');
+        const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutos
+
+        // Invalidar tokens anteriores del mismo correo
+        await supabase
+            .from('password_reset_tokens')
+            .update({ used: true })
+            .eq('correo', correo.toLowerCase().trim())
+            .eq('used', false);
+
+        // Guardar el nuevo token
+        const { error: insertError } = await supabase
+            .from('password_reset_tokens')
+            .insert([{ correo: correo.toLowerCase().trim(), token, expires_at: expiresAt }]);
+
+        if (insertError) {
+            console.error('[forgotPassword] Error guardando token:', insertError);
+            return res.status(500).json({ error: 'Error al procesar la solicitud' });
+        }
+
+        // Construir link de reset
+        const resetLink = `${process.env.APP_URL}/reset-password?token=${token}`;
+
+        // Enviar email
+        await sendPasswordResetEmail(correo.toLowerCase().trim(), resetLink);
+
+        res.status(200).json({
+            message: 'Si ese correo está registrado, recibirás un enlace en breve.'
+        });
+
+    } catch (err) {
+        console.error('[forgotPassword]', err);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
+// --- RESET PASSWORD ---
+export const resetPassword = async (req, res) => {
+    try {
+        const { token, newPassword } = req.body;
+
+        if (!token || !newPassword) {
+            return res.status(400).json({ error: 'Token y nueva contraseña son requeridos' });
+        }
+
+        if (newPassword.length < 8) {
+            return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres' });
+        }
+
+        // Buscar el token en la base de datos
+        const { data: resetData, error: tokenError } = await supabase
+            .from('password_reset_tokens')
+            .select('*')
+            .eq('token', token)
+            .eq('used', false)
+            .single();
+
+        if (tokenError || !resetData) {
+            return res.status(400).json({ error: 'El enlace es inválido o ya fue utilizado' });
+        }
+
+        // Verificar expiración
+        if (new Date() > new Date(resetData.expires_at)) {
+            return res.status(400).json({ error: 'El enlace ha expirado. Solicita uno nuevo.' });
+        }
+
+        // Hashear la nueva contraseña
+        const password_hash = await bcrypt.hash(newPassword, 10);
+
+        // Actualizar la contraseña del alumno
+        const { error: updateError } = await supabase
+            .from('alumnos')
+            .update({ password_hash })
+            .eq('correo', resetData.correo);
+
+        if (updateError) {
+            console.error('[resetPassword] Error actualizando contraseña:', updateError);
+            return res.status(500).json({ error: 'No se pudo actualizar la contraseña' });
+        }
+
+        // Marcar el token como usado
+        await supabase
+            .from('password_reset_tokens')
+            .update({ used: true })
+            .eq('token', token);
+
+        res.status(200).json({ message: 'Contraseña actualizada correctamente' });
+
+    } catch (err) {
+        console.error('[resetPassword]', err);
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
