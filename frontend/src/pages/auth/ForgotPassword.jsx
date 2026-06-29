@@ -48,7 +48,7 @@ export default function ForgotPassword() {
           <h1 className="text-5xl font-black tracking-tighter text-gray-800">
             Seren<span className="text-[#8BA888]">IA</span>
           </h1>
-          <p className="text-[9px] font-black text-gray-500 tracking-[.3em] uppercase mt-3 italic">
+          <p className="text-[11px] font-black text-gray-500 tracking-[.3em] uppercase mt-3 italic">
             Universidad Tecnológica de San Juan del Río
           </p>
         </header>
@@ -63,7 +63,7 @@ export default function ForgotPassword() {
               <h2 className="text-2xl font-black text-gray-800 tracking-tight">
                 ¿Olvidaste tu contraseña?
               </h2>
-              <p className="text-[11px] text-gray-400 font-semibold mt-2 leading-relaxed">
+              <p className="text-[11px] text-gray-600 font-semibold mt-2 leading-relaxed">
                 Escribe tu correo institucional y te enviaremos<br />un enlace para restablecerla.
               </p>
             </div>
@@ -71,7 +71,7 @@ export default function ForgotPassword() {
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4" noValidate>
               <div className="space-y-1">
-                <label className="text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] ml-5">
+                <label className="text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-5">
                   Correo Institucional
                 </label>
                 <input
@@ -87,11 +87,11 @@ export default function ForgotPassword() {
                   className={`w-full px-7 py-4 bg-[#F9F9F7] rounded-[22px] outline-none border transition-all text-sm font-bold
                     ${error
                       ? 'border-rose-400 bg-rose-50/50 text-rose-900 placeholder:text-rose-300'
-                      : 'border-transparent focus:border-[#8BA888]/40 focus:bg-white text-gray-700 placeholder:text-gray-400'}
+                      : 'border-transparent focus:border-[#8BA888]/40 focus:bg-white text-gray-700 placeholder:text-gray-600'}
                     disabled:opacity-50`}
                 />
                 {error && (
-                  <span className="text-[10px] text-rose-500 font-bold ml-5 mt-1 flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
+                  <span className="text-[12px] text-rose-500 font-bold ml-5 mt-1 flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
                     <AlertCircle size={10} /> {error}
                   </span>
                 )}
@@ -119,12 +119,12 @@ export default function ForgotPassword() {
             <p className="text-[12px] text-gray-500 font-semibold leading-relaxed mb-2">
               Si ese correo está registrado, recibirás un enlace de recuperación en los próximos minutos.
             </p>
-            <p className="text-[11px] text-gray-400 font-semibold leading-relaxed">
+            <p className="text-[11px] text-gray-600 font-semibold leading-relaxed">
               Recuerda revisar tu bandeja de spam.<br />El enlace expira en <strong className="text-gray-600">15 minutos</strong>.
             </p>
 
             <div className="mt-8 p-4 bg-[#F9F9F7] rounded-[20px] border border-gray-100">
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+              <p className="text-[12px] font-black text-gray-600 uppercase tracking-widest">
                 ¿No recibiste nada?
               </p>
               <button
@@ -141,7 +141,7 @@ export default function ForgotPassword() {
         <footer className="mt-8 text-center">
           <Link
             to="/login"
-            className="inline-flex items-center gap-2 text-[10px] font-black text-gray-400 hover:text-[#8BA888] transition-colors uppercase tracking-widest"
+            className="inline-flex items-center gap-2 text-[12px] font-black text-gray-600 hover:text-[#8BA888] transition-colors uppercase tracking-widest"
           >
             <ArrowLeft size={12} /> Volver al inicio de sesión
           </Link>

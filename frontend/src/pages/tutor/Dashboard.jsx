@@ -125,7 +125,7 @@ export default function TutorDashboard() {
   }
 
   if (loading) return (
-    <div className="h-screen w-full flex items-center justify-center bg-[#F9F9F7] text-gray-400 font-black text-[10px] tracking-[0.3em]">
+    <div className="h-screen w-full flex items-center justify-center bg-[#F9F9F7] text-gray-600 font-black text-[12px] tracking-[0.3em]">
       CARGANDO SERENIA...
     </div>
   )
@@ -138,19 +138,19 @@ export default function TutorDashboard() {
           
           <section className="mb-10 bg-white/60 p-8 rounded-[35px] border border-white/40 shadow-sm flex justify-between items-center">
             <div>
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.4em] mb-2">Panel SerenIA</p>
+              <p className="text-[12px] font-black text-gray-600 uppercase tracking-[0.4em] mb-2">Panel SerenIA</p>
               <h1 className="text-3xl font-black text-gray-800 tracking-tighter">Bienvenido, <span className="text-[#8BA888]">Tutor.</span></h1>
             </div>
             <div className="flex flex-col items-end gap-1">
               <div className="w-12 h-12 bg-[#E8EDDF] rounded-2xl flex items-center justify-center text-[#8BA888]"><Users size={20} /></div>
-              <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{alumnosProcesados.length} Alumnos</p>
+              <p className="text-[11px] font-black text-gray-600 uppercase tracking-widest">{alumnosProcesados.length} Alumnos</p>
             </div>
           </section>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="flex flex-col xl:grid xl:grid-cols-12 gap-8">
             <div className="lg:col-span-3 bg-white/60 rounded-[35px] p-8 border border-white/40">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Mis Grupos</h3>
+                <h3 className="text-[12px] font-black text-gray-500 uppercase tracking-widest">Mis Grupos</h3>
                 <button onClick={() => { setFormGrupo({ nombre: '', carrera_id: '', cuatrimestre: '' }); setModal({ open: true, mode: 'crear' }); }} className="p-2 bg-[#8BA888] text-white rounded-xl shadow-md"><Plus size={18} /></button>
               </div>
               <div className="space-y-3">
@@ -160,7 +160,7 @@ export default function TutorDashboard() {
                       <div className="flex items-center gap-2">
                         <p className="font-black text-gray-800 text-sm">{g.nombre}</p>
                       </div>
-                      <p className="text-[9px] font-bold text-gray-400 uppercase">{g.cuatrimestre}° Cuatrimestre</p>
+                      <p className="text-[11px] font-bold text-gray-600 uppercase">{g.cuatrimestre}° Cuatrimestre</p>
                     </div>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button onClick={async () => {
@@ -178,20 +178,20 @@ export default function TutorDashboard() {
                 {/* Grupos Inactivos */}
                 {grupos.filter(g => g.estado === 'inactivo').length > 0 && (
                   <div className="pt-4 mt-4 border-t border-gray-100">
-                    <h4 className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-3">Grupos Pausados</h4>
+                    <h4 className="text-[11px] font-black text-gray-600 uppercase tracking-widest mb-3">Grupos Pausados</h4>
                     {grupos.filter(g => g.estado === 'inactivo').map(g => (
                       <div key={g.id} className="bg-gray-50 p-4 rounded-2xl border border-gray-200 opacity-70 flex justify-between items-center group mb-2">
                         <div>
                           <div className="flex items-center gap-2">
                             <p className="font-black text-gray-500 text-sm line-through">{g.nombre}</p>
                           </div>
-                          <p className="text-[9px] font-bold text-gray-400 uppercase">{g.cuatrimestre}° Cuatrimestre</p>
+                          <p className="text-[11px] font-bold text-gray-600 uppercase">{g.cuatrimestre}° Cuatrimestre</p>
                         </div>
                         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button onClick={async () => {
                             await cambiarEstadoGrupo(g.id, 'activo');
                             cargarDatos();
-                          }} className="p-2 text-gray-400 hover:text-[#8BA888]" title="Reactivar Grupo">
+                          }} className="p-2 text-gray-600 hover:text-[#8BA888]" title="Reactivar Grupo">
                             <Play size={14} />
                           </button>
                           <button onClick={async () => { if(window.confirm("¿Eliminar?")) { await eliminarGrupo(g.id); cargarDatos(); }}} className="p-2 text-gray-300 hover:text-red-500"><Trash2 size={14} /></button>
@@ -206,15 +206,15 @@ export default function TutorDashboard() {
             {/* SECCIÓN GRÁFICA CON POPUP RESTAURADO */}
             <div className="lg:col-span-9 bg-white rounded-[35px] p-8 border border-gray-50 shadow-sm relative">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Salud General</h3>
+                <h3 className="text-[12px] font-black text-gray-500 uppercase tracking-widest">Salud General</h3>
                 <div className="flex gap-4">
                   {Object.entries(TIPO_COLORS).map(([k, v]) => (
-                    <div key={k} className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: v.bar }} /><span className="text-[10px] font-bold text-gray-500">{v.label}</span></div>
+                    <div key={k} className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: v.bar }} /><span className="text-[12px] font-bold text-gray-500">{v.label}</span></div>
                   ))}
                 </div>
               </div>
               <div className="h-[280px]">
-                <Suspense fallback={<div className="h-full flex items-center justify-center text-[10px] text-gray-400 font-black">CARGANDO...</div>}>
+                <Suspense fallback={<div className="h-full flex items-center justify-center text-[12px] text-gray-600 font-black">CARGANDO...</div>}>
                   <GraficaBarras data={dataGrafica} onBarClick={setPopupGrafica} />
                 </Suspense>
               </div>
@@ -224,14 +224,14 @@ export default function TutorDashboard() {
                 <div className="absolute top-6 right-6 w-80 bg-white/95 backdrop-blur-xl rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-50 border border-white overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                   <div className="p-5 pb-4 flex justify-between items-start border-b border-gray-50" style={{ background: `${TIPO_COLORS[popupGrafica.tipo]?.bar}10` }}>
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: TIPO_COLORS[popupGrafica.tipo]?.text }}>
+                      <p className="text-[12px] font-black uppercase tracking-widest mb-1" style={{ color: TIPO_COLORS[popupGrafica.tipo]?.text }}>
                         {TIPO_COLORS[popupGrafica.tipo]?.label} · {popupGrafica.nivel}
                       </p>
                       <p className="text-2xl font-black text-gray-800 tracking-tighter">
-                        {alumnosEnPopup.length} <span className="text-[10px] text-gray-400 font-bold uppercase tracking-normal">Alumnos</span>
+                        {alumnosEnPopup.length} <span className="text-[12px] text-gray-600 font-bold uppercase tracking-normal">Alumnos</span>
                       </p>
                     </div>
-                    <button onClick={() => setPopupGrafica(null)} className="p-1.5 bg-white rounded-full shadow-sm text-gray-400 hover:text-gray-600 transition-colors">
+                    <button onClick={() => setPopupGrafica(null)} className="p-1.5 bg-white rounded-full shadow-sm text-gray-600 hover:text-gray-600 transition-colors">
                       <X size={14} />
                     </button>
                   </div>
@@ -243,19 +243,19 @@ export default function TutorDashboard() {
                         className="flex items-center justify-between p-2.5 rounded-xl hover:bg-gray-50 cursor-pointer transition-all group"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-black" style={{ background: `${TIPO_COLORS[popupGrafica.tipo]?.bar}20`, color: TIPO_COLORS[popupGrafica.tipo]?.text }}>
+                          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-[12px] font-black" style={{ background: `${TIPO_COLORS[popupGrafica.tipo]?.bar}20`, color: TIPO_COLORS[popupGrafica.tipo]?.text }}>
                             {a.nombre?.[0]}
                           </div>
                           <div>
                             <p className="text-xs font-black text-gray-800 group-hover:text-[#8BA888]">{a.ape_p} {a.nombre}</p>
-                            <p className="text-[9px] text-gray-400 font-bold">{a.correo}</p>
+                            <p className="text-[11px] text-gray-600 font-bold">{a.correo}</p>
                           </div>
                         </div>
                         <ChevronRight size={12} className="text-gray-200 group-hover:text-[#8BA888]" />
                       </div>
                     ))}
                     {alumnosEnPopup.length === 0 && (
-                      <p className="text-center py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Sin alumnos</p>
+                      <p className="text-center py-4 text-[12px] font-bold text-gray-600 uppercase tracking-widest">Sin alumnos</p>
                     )}
                   </div>
                 </div>
@@ -264,38 +264,40 @@ export default function TutorDashboard() {
 
             <div className="lg:col-span-12 bg-white rounded-[40px] p-8 border border-gray-50 shadow-sm">
               <div className="flex flex-col md:flex-row gap-4 mb-8 items-center justify-between">
-                <div><h3 className="text-lg font-black text-gray-800 tracking-tighter">Estudiantes</h3><p className="text-[10px] text-gray-400">Selecciona para ver detalle</p></div>
+                <div><h3 className="text-lg font-black text-gray-800 tracking-tighter">Estudiantes</h3><p className="text-[12px] text-gray-600">Selecciona para ver detalle</p></div>
                 <div className="flex gap-3 flex-wrap">
                   <div className="relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={15} />
                     <input value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Buscar..." className="pl-11 pr-5 py-3 bg-[#F9F9F7] rounded-2xl text-sm font-bold outline-none w-48" />
                   </div>
-                  <select value={grupoFiltro} onChange={e => setGrupoFiltro(e.target.value)} className="px-5 py-3 bg-[#F9F9F7] rounded-2xl text-[10px] font-black uppercase outline-none text-gray-600">
+                  <select value={grupoFiltro} onChange={e => setGrupoFiltro(e.target.value)} className="px-5 py-3 bg-[#F9F9F7] rounded-2xl text-[12px] font-black uppercase outline-none text-gray-600">
                     <option value="">Todos los Grupos</option>
                     {grupos.map(g => <option key={g.id} value={g.id}>{g.nombre} {g.estado === 'inactivo' ? '(Pausado)' : ''}</option>)}
                   </select>
-                  <select value={riesgoFiltro} onChange={e => setRiesgoFiltro(e.target.value)} className="px-5 py-3 bg-[#F9F9F7] rounded-2xl text-[10px] font-black uppercase outline-none text-gray-600">
+                  <select value={riesgoFiltro} onChange={e => setRiesgoFiltro(e.target.value)} className="px-5 py-3 bg-[#F9F9F7] rounded-2xl text-[12px] font-black uppercase outline-none text-gray-600">
                     <option value="todos">Todos los Riesgos</option><option value="Crítico">Crítico</option><option value="Alto">Alto</option><option value="Moderado">Moderado</option><option value="Bajo">Bajo</option>
                   </select>
                 </div>
               </div>
-              <table className="w-full text-left border-separate border-spacing-y-2">
-                <thead><tr className="text-[9px] font-black text-gray-400 uppercase pl-4"><th>Estudiante</th><th className="text-center">Riesgo</th><th className="text-center">Ansiedad</th><th className="text-center">Estrés</th><th className="text-center">Depresión</th></tr></thead>
-                <tbody>
-                  {alumnosFiltrados.map(a => {
-                    const s = NIVEL_STYLES[a.nivelGeneral]
-                    return (
-                      <tr key={a.id} onClick={() => setAlumnoSeleccionado(a)} className={`cursor-pointer transition-all hover:scale-[1.01] ${a.nivelGeneral === 'Crítico' ? 'bg-red-50/40' : 'hover:bg-gray-50/80'}`}>
-                        <td className="py-4 pl-4 rounded-l-[20px]"><div className="flex items-center gap-3"><div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs ${s.bg} ${s.text}`}>{a.nombre?.[0]}</div><div><p className="text-sm font-black text-gray-800">{a.ape_p} {a.nombre}</p><p className="text-[9px] font-bold text-gray-400">{a.correo}</p></div></div></td>
-                        <td className="text-center"><span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-black uppercase ${s.bg} ${s.text}`}><span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />{a.nivelGeneral}</span></td>
-                        <td className="text-center"><MiniNivel nivel={a.nivelAns} color="#FFD18A" /></td>
-                        <td className="text-center"><MiniNivel nivel={a.nivelEst} color="#FFADAD" /></td>
-                        <td className="text-center rounded-r-[20px]"><MiniNivel nivel={a.nivelDep} color="#A0A4FF" /></td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[800px] text-left border-separate border-spacing-y-2">
+                  <thead><tr className="text-[11px] font-black text-gray-600 uppercase pl-4"><th>Estudiante</th><th className="text-center">Riesgo</th><th className="text-center">Ansiedad</th><th className="text-center">Estrés</th><th className="text-center">Depresión</th></tr></thead>
+                  <tbody>
+                    {alumnosFiltrados.map(a => {
+                      const s = NIVEL_STYLES[a.nivelGeneral]
+                      return (
+                        <tr key={a.id} onClick={() => setAlumnoSeleccionado(a)} className={`cursor-pointer transition-all hover:scale-[1.01] ${a.nivelGeneral === 'Crítico' ? 'bg-red-50/40' : 'hover:bg-gray-50/80'}`}>
+                          <td className="py-4 pl-4 rounded-l-[20px]"><div className="flex items-center gap-3"><div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs ${s.bg} ${s.text}`}>{a.nombre?.[0]}</div><div><p className="text-sm font-black text-gray-800">{a.ape_p} {a.nombre}</p><p className="text-[11px] font-bold text-gray-600">{a.correo}</p></div></div></td>
+                          <td className="text-center"><span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black uppercase ${s.bg} ${s.text}`}><span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />{a.nivelGeneral}</span></td>
+                          <td className="text-center"><MiniNivel nivel={a.nivelAns} color="#FFD18A" /></td>
+                          <td className="text-center"><MiniNivel nivel={a.nivelEst} color="#FFADAD" /></td>
+                          <td className="text-center rounded-r-[20px]"><MiniNivel nivel={a.nivelDep} color="#A0A4FF" /></td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -311,8 +313,8 @@ export default function TutorDashboard() {
               <input type="number" value={formGrupo.cuatrimestre} onChange={e => setFormGrupo({ ...formGrupo, cuatrimestre: e.target.value })} placeholder="Cuatri" className="w-full px-6 py-4 bg-[#F9F9F7] rounded-3xl font-bold outline-none" />
             </div>
             <div className="flex gap-4">
-              <button onClick={() => setModal({ open: false })} className="flex-1 text-gray-400 font-black uppercase text-[10px]">Cancelar</button>
-              <button onClick={guardarGrupo} disabled={saving} className="flex-1 py-4 bg-gray-800 text-white rounded-[25px] font-black uppercase text-[10px] tracking-widest">{saving ? '...' : 'Guardar'}</button>
+              <button onClick={() => setModal({ open: false })} className="flex-1 text-gray-600 font-black uppercase text-[12px]">Cancelar</button>
+              <button onClick={guardarGrupo} disabled={saving} className="flex-1 py-4 bg-gray-800 text-white rounded-[25px] font-black uppercase text-[12px] tracking-widest">{saving ? '...' : 'Guardar'}</button>
             </div>
           </div>
         </div>
@@ -323,5 +325,5 @@ export default function TutorDashboard() {
 
 function MiniNivel({ nivel, color }) {
   const opacity = { Crítico: '1', Alto: '0.85', Moderado: '0.6', Bajo: '0.35' }[nivel] || '0.35'
-  return <span className="inline-block px-2.5 py-1 rounded-full text-[9px] font-black uppercase text-white" style={{ background: color, opacity }}>{nivel}</span>
+  return <span className="inline-block px-2.5 py-1 rounded-full text-[11px] font-black uppercase text-white" style={{ background: color, opacity }}>{nivel}</span>
 }

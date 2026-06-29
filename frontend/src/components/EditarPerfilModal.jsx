@@ -96,7 +96,7 @@ export default function EditarPerfilModal({ perfil, onClose, onUpdate }) {
           <div className="flex justify-between items-center mb-10">
             <div>
               <h2 className="text-2xl font-black text-gray-800 tracking-tighter">Mi Perfil</h2>
-              <p className="text-[10px] font-black text-[#8BA888] uppercase tracking-[0.3em] mt-1">Actualiza tu información</p>
+              <p className="text-[12px] font-black text-[#8BA888] uppercase tracking-[0.3em] mt-1">Actualiza tu información</p>
             </div>
             <button onClick={onClose} className="p-2 text-gray-300 hover:text-rose-400 transition-colors">
               <X size={24} />
@@ -106,7 +106,7 @@ export default function EditarPerfilModal({ perfil, onClose, onUpdate }) {
           <form onSubmit={handleSubmit} className="space-y-5">
             
             <div className="space-y-2">
-              <label className="flex items-center gap-2 text-[9px] font-black text-gray-300 uppercase tracking-widest ml-4">
+              <label className="flex items-center gap-2 text-[11px] font-black text-gray-300 uppercase tracking-widest ml-4">
                 <UserCircle2 size={12} /> Género
               </label>
               <select 
@@ -121,7 +121,7 @@ export default function EditarPerfilModal({ perfil, onClose, onUpdate }) {
             </div>
 
             <div className="space-y-2">
-              <label className="flex items-center gap-2 text-[9px] font-black text-gray-300 uppercase tracking-widest ml-4">
+              <label className="flex items-center gap-2 text-[11px] font-black text-gray-300 uppercase tracking-widest ml-4">
                 <GraduationCap size={12} /> Carrera
               </label>
               <select 
@@ -136,7 +136,7 @@ export default function EditarPerfilModal({ perfil, onClose, onUpdate }) {
             </div>
 
             <div className="space-y-2">
-              <label className="flex items-center gap-2 text-[9px] font-black text-gray-300 uppercase tracking-widest ml-4">
+              <label className="flex items-center gap-2 text-[11px] font-black text-gray-300 uppercase tracking-widest ml-4">
                 <Users size={12} /> Grupo
               </label>
               <div className="relative">
@@ -161,7 +161,7 @@ export default function EditarPerfilModal({ perfil, onClose, onUpdate }) {
             </div>
 
             {error && (
-              <div className="bg-rose-50 text-rose-500 text-[10px] font-black uppercase p-4 rounded-[20px] text-center border border-rose-100 flex items-center justify-center gap-2 animate-in slide-in-from-top-1">
+              <div className="bg-rose-50 text-rose-500 text-[12px] font-black uppercase p-4 rounded-[20px] text-center border border-rose-100 flex items-center justify-center gap-2 animate-in slide-in-from-top-1">
                 <AlertCircle size={14} />
                 {error}
               </div>

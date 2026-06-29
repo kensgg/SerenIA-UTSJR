@@ -156,7 +156,7 @@ export default function AlumnoDetalleModal({ alumno, onClose }) {
 
           {/* ── Cards de nivel actual ── */}
           <div className="mt-auto">
-            <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-3">
+            <p className="text-[8px] font-black text-gray-600 uppercase tracking-widest mb-3">
               Nivel Actual
             </p>
             <div className="space-y-2">
@@ -168,10 +168,10 @@ export default function AlumnoDetalleModal({ alumno, onClose }) {
                     key={c.key}
                     className={`flex items-center justify-between px-4 py-3 rounded-2xl border ${s.bg} ${s.border}`}
                   >
-                    <span className="text-[10px] font-black text-gray-600 uppercase tracking-wide">
+                    <span className="text-[12px] font-black text-gray-600 uppercase tracking-wide">
                       {c.label}
                     </span>
-                    <span className={`text-[10px] font-black uppercase tracking-wide ${s.text}`}>
+                    <span className={`text-[12px] font-black uppercase tracking-wide ${s.text}`}>
                       {labelNivel}
                     </span>
                   </div>
@@ -189,10 +189,10 @@ export default function AlumnoDetalleModal({ alumno, onClose }) {
 
           {/* Gráfica */}
           <div className="mb-12">
-            <h3 className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em] mb-1 flex items-center gap-2">
+            <h3 className="text-[12px] font-black text-gray-300 uppercase tracking-[0.3em] mb-1 flex items-center gap-2">
               <Activity size={14} /> Historial de Evaluación
             </h3>
-            <p className="text-[9px] text-gray-400 mb-6 ml-0.5">
+            <p className="text-[11px] text-gray-600 mb-6 ml-0.5">
               Escala 0–3 · Bajo / Moderado / Alto / Crítico
             </p>
             <div className="h-[260px] w-full">
@@ -204,7 +204,7 @@ export default function AlumnoDetalleModal({ alumno, onClose }) {
           <div className="space-y-6">
             <div className="flex items-center gap-2 ml-1">
               <Sparkles size={14} className="text-[#8BA888]" />
-              <h3 className="text-[9px] font-black text-gray-300 uppercase tracking-widest">
+              <h3 className="text-[11px] font-black text-gray-300 uppercase tracking-widest">
                 Recomendaciones SerenIA
               </h3>
             </div>
@@ -220,7 +220,7 @@ export default function AlumnoDetalleModal({ alumno, onClose }) {
                   return (
                     <div key={i} className={`${estilo.bg} ${estilo.border} border p-6 rounded-[30px] hover:shadow-md transition-all`}>
                       <div className="flex justify-between items-center mb-3">
-                        <p className={`text-[9px] font-black uppercase tracking-widest ${estilo.text}`}>
+                        <p className={`text-[11px] font-black uppercase tracking-widest ${estilo.text}`}>
                           {s.tipo}
                         </p>
                         <Sparkles size={12} className={estilo.text} />
@@ -233,7 +233,7 @@ export default function AlumnoDetalleModal({ alumno, onClose }) {
                 })
               ) : (
                 <div className="col-span-full p-10 text-center border-2 border-dashed border-gray-100 rounded-[40px]">
-                  <p className="text-sm italic text-gray-400">
+                  <p className="text-sm italic text-gray-600">
                     No hay sugerencias procesadas para este estudiante.
                   </p>
                 </div>
@@ -251,7 +251,7 @@ function InfoItem({ icon, label, value }) {
     <div className="flex items-start gap-3">
       <div className="mt-1 text-[#8BA888] opacity-40">{icon}</div>
       <div className="min-w-0">
-        <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest">{label}</p>
+        <p className="text-[8px] font-black text-gray-600 uppercase tracking-widest">{label}</p>
         <p className="text-xs font-bold text-gray-600 truncate">{value || '---'}</p>
       </div>
     </div>

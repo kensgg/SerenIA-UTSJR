@@ -118,7 +118,7 @@ export default function Register() {
   };
 
   const InputError = ({ message }) => message ? (
-    <span className="text-[10px] text-rose-500 font-bold ml-4 mt-1 flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
+    <span className="text-[12px] text-rose-500 font-bold ml-4 mt-1 flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
       <AlertCircle size={10} /> {message}
     </span>
   ) : null;
@@ -143,7 +143,7 @@ export default function Register() {
           <h1 className="text-4xl font-black tracking-tighter text-gray-800">
             Crear <span className="text-[#8BA888]">Cuenta</span>
           </h1>
-          <p className="text-[10px] font-black text-[#8BA888] uppercase tracking-[0.3em] mt-3">
+          <p className="text-[12px] font-black text-[#8BA888] uppercase tracking-[0.3em] mt-3">
             Comunidad SerenIA • UTSJR
           </p>
         </header>
@@ -151,7 +151,7 @@ export default function Register() {
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
           {/* Información Personal */}
           <div className="space-y-3">
-            <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-5">Información Personal</label>
+            <label className="text-[11px] font-black text-gray-600 uppercase tracking-widest ml-5">Información Personal</label>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
                 <input type="text" name="nombre" placeholder="Nombre(s)" value={form.nombre} onChange={handleChange} className={inputClass('nombre')} />
@@ -171,12 +171,12 @@ export default function Register() {
           {/* Credenciales */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-5">Correo UTSJR</label>
+              <label className="text-[11px] font-black text-gray-600 uppercase tracking-widest ml-5">Correo UTSJR</label>
               <input type="email" name="correo" value={form.correo} placeholder="ejemplo@utsjr.edu.mx" onChange={handleChange} className={inputClass('correo')} />
               <InputError message={errors.correo} />
             </div>
             <div className="space-y-1">
-              <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-5">Contraseña</label>
+              <label className="text-[11px] font-black text-gray-600 uppercase tracking-widest ml-5">Contraseña</label>
               <input type="password" name="password" value={form.password} placeholder="Mín. 8 caracteres y una Mayús." onChange={handleChange} className={inputClass('password')} />
               <InputError message={errors.password} />
             </div>
@@ -184,7 +184,7 @@ export default function Register() {
 
           {/* Datos Académicos */}
           <div className="space-y-3 pt-2">
-            <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-5 text-center block">Datos Académicos</label>
+            <label className="text-[11px] font-black text-gray-600 uppercase tracking-widest ml-5 text-center block">Datos Académicos</label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <select name="genero" value={form.genero} onChange={handleChange} className={inputClass('genero')}>
@@ -217,7 +217,7 @@ export default function Register() {
                   value={form.grupo_id} 
                   onChange={handleChange} 
                   className={`w-full px-6 py-4 rounded-[22px] outline-none font-black text-sm border transition-all cursor-pointer ${
-                    loadingGrupos ? 'bg-gray-100 text-gray-400 animate-pulse' : 'bg-[#E8EDDF] text-[#8BA888] border-[#8BA888]/10'
+                    loadingGrupos ? 'bg-gray-100 text-gray-600 animate-pulse' : 'bg-[#E8EDDF] text-[#8BA888] border-[#8BA888]/10'
                   }`}
                   disabled={loadingGrupos}
                 >
@@ -231,7 +231,7 @@ export default function Register() {
 
           {/* Error General */}
           {errors.general && (
-            <div className="bg-rose-50 text-rose-500 text-[10px] font-black uppercase p-4 rounded-[20px] text-center border border-rose-100 flex items-center justify-center gap-2">
+            <div className="bg-rose-50 text-rose-500 text-[12px] font-black uppercase p-4 rounded-[20px] text-center border border-rose-100 flex items-center justify-center gap-2">
               <AlertCircle size={14} />
               {errors.general}
             </div>
@@ -247,7 +247,7 @@ export default function Register() {
         </form>
 
         <div className="mt-10 text-center">
-          <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest">
+          <p className="text-[12px] font-black text-gray-300 uppercase tracking-widest">
             ¿Ya eres parte? <Link to="/login" className="text-[#8BA888] hover:underline underline-offset-4 ml-1">Inicia Sesión</Link>
           </p>
         </div>

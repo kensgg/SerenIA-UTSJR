@@ -111,7 +111,7 @@ export default function Dashboard() {
     ]
   }
 
-  if (loading) return <div className="h-screen w-full flex items-center justify-center bg-[#F9F9F7] text-gray-400 font-black text-[10px] tracking-[0.3em]">CARGANDO SERENIA...</div>
+  if (loading) return <div className="h-screen w-full flex items-center justify-center bg-[#F9F9F7] text-gray-600 font-black text-[12px] tracking-[0.3em]">CARGANDO SERENIA...</div>
 
   return (
     <div className="min-h-screen w-full bg-[#F9F9F7] flex flex-col font-sans antialiased">
@@ -124,7 +124,7 @@ export default function Dashboard() {
             <div>
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-2 h-2 rounded-full bg-[#A3B899] animate-pulse"></div>
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.4em]">Panel de Control</p>
+                <p className="text-[12px] font-black text-gray-600 uppercase tracking-[0.4em]">Panel de Control</p>
               </div>
               <div className="flex flex-col md:flex-row md:items-baseline gap-2">
                 <h1 className="text-3xl font-black text-gray-800 tracking-tighter">Hola,</h1>
@@ -133,15 +133,15 @@ export default function Dashboard() {
                 </span>
               </div>
               <div className="flex flex-wrap gap-x-6 gap-y-2 mt-3">
-                <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-2">
+                <p className="text-[11px] text-gray-600 font-bold uppercase tracking-widest flex items-center gap-2">
                   <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
                   Grupo: <span className="text-gray-600">{perfil?.grupos?.nombre || 'Pendiente'}</span>
                 </p>
-                <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-2">
+                <p className="text-[11px] text-gray-600 font-bold uppercase tracking-widest flex items-center gap-2">
                   <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
                   Carrera: <span className="text-gray-600">{perfil?.carreras?.nombre || 'No asignada'}</span>
                 </p>
-                <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-2">
+                <p className="text-[11px] text-gray-600 font-bold uppercase tracking-widest flex items-center gap-2">
                   <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
                   Cuatrimestre: <span className="text-gray-600">{perfil?.cuatrimestre ? `${perfil.cuatrimestre}°` : 'S/N'}</span>
                 </p>
@@ -150,7 +150,7 @@ export default function Dashboard() {
 
             <button 
               onClick={() => setModalPerfilOpen(true)}
-              className="flex items-center gap-2 bg-white px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-gray-500 shadow-sm hover:shadow-md hover:bg-gray-50 transition-all border border-gray-100 active:scale-95"
+              className="flex items-center gap-2 bg-white px-6 py-4 rounded-2xl text-[12px] font-black uppercase tracking-widest text-gray-500 shadow-sm hover:shadow-md hover:bg-gray-50 transition-all border border-gray-100 active:scale-95"
             >
               <User size={14} className="text-[#8BA888]" /> Editar Perfil
             </button>
@@ -167,7 +167,7 @@ export default function Dashboard() {
                 <div key={s.id} className={`${s.theme.bg} rounded-[35px] p-8 shadow-sm transition-all hover:translate-y-[-4px] border border-white/40`}>
                   <div className="flex justify-between items-start mb-10">
                     <div>
-                      <p className="text-[10px] font-bold text-gray-600/40 uppercase tracking-widest mb-1">{s.label}</p>
+                      <p className="text-[12px] font-bold text-gray-600/40 uppercase tracking-widest mb-1">{s.label}</p>
                       <div className="bg-white/50 backdrop-blur-sm px-3 py-0.5 rounded-full text-[8px] font-black uppercase text-gray-700">Resultado Reciente</div>
                     </div>
                     <div className="w-9 h-9 rounded-xl bg-white/50 flex items-center justify-center text-gray-600"><Activity size={18} /></div>
@@ -176,7 +176,7 @@ export default function Dashboard() {
                   <div className="flex items-end justify-between">
                     <p className="text-5xl font-black text-gray-800 tracking-tighter">
                       {Math.round(valorActual)}
-                      <span className="text-xl font-bold text-gray-400/40 ml-1">/{s.theme.max}</span>
+                      <span className="text-xl font-bold text-gray-600/40 ml-1">/{s.theme.max}</span>
                     </p>
                     <button onClick={() => setModalTipo(s.id)} className="bg-white/70 hover:bg-white p-3 rounded-2xl shadow-sm transition-all group">
                       <ArrowUpRight size={18} className="text-gray-700 group-hover:rotate-45 transition-transform" />
@@ -187,9 +187,9 @@ export default function Dashboard() {
             })}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="flex flex-col xl:grid xl:grid-cols-12 gap-8">
             <div className="lg:col-span-8 bg-white border border-gray-50 rounded-[35px] p-8 shadow-sm">
-              <h3 className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-8">Evolución Emocional (Últimos Test)</h3>
+              <h3 className="text-[11px] font-black text-gray-300 uppercase tracking-widest mb-8">Evolución Emocional (Últimos Test)</h3>
               <div className="h-[320px]">
                 <Line data={chartData} options={{
                   responsive: true, maintainAspectRatio: false,
@@ -205,7 +205,7 @@ export default function Dashboard() {
             <div className="lg:col-span-4 flex flex-col gap-4">
               <div className="flex items-center gap-2 mb-1 ml-2">
                 <p className="p-1 bg-amber-100 rounded-md"><Sparkles size={12} className="text-[#D97706]" /></p>
-                <h3 className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Sugerencias SerenIA</h3>
+                <h3 className="text-[11px] font-black text-gray-600 uppercase tracking-widest">Sugerencias SerenIA</h3>
               </div>
               
               <div className="overflow-y-auto max-h-[400px] pr-2 space-y-4 scrollbar-hide">
@@ -225,7 +225,7 @@ export default function Dashboard() {
                   );
                 }) : (
                   <div className="p-8 border-2 border-dashed border-gray-100 rounded-[35px] text-center">
-                    <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Realiza un test para recibir sugerencias.</p>
+                    <p className="text-[12px] font-bold text-gray-300 uppercase tracking-widest">Realiza un test para recibir sugerencias.</p>
                   </div>
                 )}
               </div>

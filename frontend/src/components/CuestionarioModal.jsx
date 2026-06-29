@@ -180,7 +180,7 @@ export default function CuestionarioModal({ tipo, onClose, onSubmit }) {
     return (
       <ModalShell onClose={onClose}>
         <div className="flex flex-col items-center py-10 px-8 text-center overflow-y-auto">
-          <div className={`mb-4 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-gray-50 ${cfgTema.colorClass}`}>
+          <div className={`mb-4 px-4 py-1 rounded-full text-[12px] font-black uppercase tracking-widest bg-gray-50 ${cfgTema.colorClass}`}>
             Nivel {resultado.nivel}
           </div>
           <div className="relative mb-8 flex items-center justify-center">
@@ -193,12 +193,12 @@ export default function CuestionarioModal({ tipo, onClose, onSubmit }) {
              </svg>
              <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-3xl font-black text-gray-800">{resultado.puntaje}</span>
-                <span className="text-[10px] text-gray-400 font-bold uppercase">Puntos</span>
+                <span className="text-[12px] text-gray-600 font-bold uppercase">Puntos</span>
              </div>
           </div>
           <h2 className="text-xl font-bold text-gray-800 mb-4 tracking-tight">¡Test Finalizado!</h2>
           <div className="bg-gray-50 rounded-[28px] p-6 mb-8 w-full border border-gray-100 relative">
-            <span className={`absolute -top-3 left-6 px-3 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest text-white ${cfgTema.progressClass}`}>Sugerencia</span>
+            <span className={`absolute -top-3 left-6 px-3 py-0.5 rounded-full text-[11px] font-black uppercase tracking-widest text-white ${cfgTema.progressClass}`}>Sugerencia</span>
             <p className="text-sm text-gray-600 leading-relaxed text-left italic pt-2">"{resultado.sugerencia}"</p>
           </div>
           <button onClick={onClose} className={`w-full py-4 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] transition-all shadow-md ${cfgTema.btnClass}`}>Regresar al Inicio</button>
@@ -211,13 +211,13 @@ export default function CuestionarioModal({ tipo, onClose, onSubmit }) {
     <ModalShell onClose={onClose}>
       <div className="pt-8 px-8 pb-4 bg-white">
         <div className="flex justify-between items-center mb-6">
-          <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded-lg ${cfgTema.badgeClass}`}>Pregunta {step + 1} de {total}</span>
+          <span className={`text-[12px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded-lg ${cfgTema.badgeClass}`}>Pregunta {step + 1} de {total}</span>
           <button onClick={onClose} className="text-gray-300 hover:text-gray-500 transition-colors">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
         </div>
         <h2 className="text-xl font-bold text-gray-800 tracking-tight leading-tight mb-1">{cfgTema.title}</h2>
-        <p className="text-[11px] text-gray-400 font-medium mb-6 uppercase tracking-wider">{cfgTema.subtitle}</p>
+        <p className="text-[11px] text-gray-600 font-medium mb-6 uppercase tracking-wider">{cfgTema.subtitle}</p>
         <div className="w-full h-1.5 bg-gray-50 rounded-full overflow-hidden">
           <div className={`h-full transition-all duration-500 ${cfgTema.progressClass}`} style={{ width: `${progreso}%` }} />
         </div>
@@ -226,7 +226,7 @@ export default function CuestionarioModal({ tipo, onClose, onSubmit }) {
       <div className="px-8 py-6 flex-1 overflow-y-auto min-h-[300px]">
         <div className="mb-8">
           {dataCfg.tipo === 'texto' && (
-            <p className={`text-[10px] font-black uppercase tracking-widest mb-2 ${cfgTema.colorClass}`}>{preguntaActual?.texto}</p>
+            <p className={`text-[12px] font-black uppercase tracking-widest mb-2 ${cfgTema.colorClass}`}>{preguntaActual?.texto}</p>
           )}
           <p className="text-base font-semibold text-gray-700 leading-snug">
             {dataCfg.tipo === 'escala' ? preguntaActual?.texto : "¿Cuál de estas opciones te describe mejor?"}
@@ -244,7 +244,7 @@ export default function CuestionarioModal({ tipo, onClose, onSubmit }) {
                 key={i}
                 disabled={isTransitioning || enviando}
                 onClick={() => elegir(valor)}
-                className={`w-full text-left px-5 py-4 rounded-[20px] border text-sm transition-all duration-200 
+                className={`w-full min-w-[800px] text-left px-5 py-4 rounded-[20px] border text-sm transition-all duration-200 
                   ${activa ? cfgTema.selectedClass : 'border-gray-100 text-gray-500 hover:bg-gray-50'}
                   ${isTransitioning ? 'cursor-not-allowed opacity-80' : ''}`}
               >
@@ -264,7 +264,7 @@ export default function CuestionarioModal({ tipo, onClose, onSubmit }) {
         <button 
           onClick={() => setStep(s => s - 1)} 
           disabled={step === 0 || isTransitioning || enviando} 
-          className="text-[10px] font-black uppercase tracking-widest text-gray-400 disabled:opacity-0 transition-opacity"
+          className="text-[12px] font-black uppercase tracking-widest text-gray-600 disabled:opacity-0 transition-opacity"
         >
           ← Anterior
         </button>
@@ -273,7 +273,7 @@ export default function CuestionarioModal({ tipo, onClose, onSubmit }) {
           <button 
             onClick={enviar} 
             disabled={seleccionada === null || enviando} 
-            className={`px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${seleccionada !== null && !enviando ? cfgTema.btnClass : 'bg-gray-200 text-gray-400'}`}
+            className={`px-8 py-3 rounded-xl text-[12px] font-black uppercase tracking-widest transition-all ${seleccionada !== null && !enviando ? cfgTema.btnClass : 'bg-gray-200 text-gray-600'}`}
           >
             {enviando ? 'Guardando...' : 'Finalizar Test'}
           </button>
@@ -281,7 +281,7 @@ export default function CuestionarioModal({ tipo, onClose, onSubmit }) {
           <button 
             onClick={() => { if (seleccionada !== null) setStep(s => s + 1); }} 
             disabled={seleccionada === null || isTransitioning} 
-            className={`px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${seleccionada !== null ? cfgTema.btnClass : 'bg-gray-200 text-gray-400'}`}
+            className={`px-8 py-3 rounded-xl text-[12px] font-black uppercase tracking-widest transition-all ${seleccionada !== null ? cfgTema.btnClass : 'bg-gray-200 text-gray-600'}`}
           >
             Siguiente →
           </button>

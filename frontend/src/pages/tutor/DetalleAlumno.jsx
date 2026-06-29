@@ -29,9 +29,9 @@ export default function DetalleAlumno() {
       .finally(() => setLoading(false))
   }, [id])
 
-  if (loading) return <div className="h-screen w-full flex items-center justify-center bg-[#F9F9F7] text-gray-400 font-black text-[10px] tracking-[0.3em]">CARGANDO PERFIL...</div>
+  if (loading) return <div className="h-screen w-full flex items-center justify-center bg-[#F9F9F7] text-gray-600 font-black text-[12px] tracking-[0.3em]">CARGANDO PERFIL...</div>
 
-  if (!detalle) return <div className="h-screen w-full flex items-center justify-center bg-[#F9F9F7] text-gray-400 font-black text-[10px] tracking-[0.3em]">ALUMNO NO ENCONTRADO</div>
+  if (!detalle) return <div className="h-screen w-full flex items-center justify-center bg-[#F9F9F7] text-gray-600 font-black text-[12px] tracking-[0.3em]">ALUMNO NO ENCONTRADO</div>
 
   const { alumno, estadisticas, riesgo } = detalle
   const initials = `${alumno.nombre?.[0] ?? ''}${alumno.ape_p?.[0] ?? ''}`.toUpperCase()
@@ -68,7 +68,7 @@ export default function DetalleAlumno() {
         {/* Botón Volver Suave */}
         <button 
           onClick={() => navigate('/tutor/dashboard')}
-          className="group flex items-center gap-2 mb-6 text-[10px] font-black text-gray-400 uppercase tracking-widest hover:text-gray-600 transition-colors"
+          className="group flex items-center gap-2 mb-6 text-[12px] font-black text-gray-600 uppercase tracking-widest hover:text-gray-600 transition-colors"
         >
           <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform"/> 
           Volver al Panel
@@ -76,7 +76,7 @@ export default function DetalleAlumno() {
 
         <div className="w-full bg-[#FAFBFF] rounded-[45px] shadow-[0_15px_40px_rgba(0,0,0,0.03)] border border-white/80 p-6 md:p-10">
           
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="flex flex-col xl:grid xl:grid-cols-12 gap-8">
             
             {/* Columna Izquierda: Perfil Card */}
             <div className="lg:col-span-4 space-y-6">
@@ -88,7 +88,7 @@ export default function DetalleAlumno() {
                   <h1 className="text-2xl font-black text-gray-800 tracking-tighter leading-tight">
                     {alumno.nombre} <br/> {alumno.ape_p} {alumno.ape_m}
                   </h1>
-                  <span className="mt-2 px-4 py-1 bg-[#F9F9F7] rounded-full text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                  <span className="mt-2 px-4 py-1 bg-[#F9F9F7] rounded-full text-[12px] font-black text-gray-600 uppercase tracking-widest">
                     {alumno.grupos?.nombre || 'Sin Grupo'}
                   </span>
                 </div>
@@ -138,10 +138,10 @@ export default function DetalleAlumno() {
                   const color = NIVEL_COLORS[nivel]
                   return (
                     <div key={i} className={`${s.theme} rounded-[30px] p-6 border border-white shadow-sm`}>
-                      <p className="text-[9px] font-black text-gray-500/50 uppercase tracking-widest mb-1">{s.label}</p>
+                      <p className="text-[11px] font-black text-gray-500/50 uppercase tracking-widest mb-1">{s.label}</p>
                       <p className="text-3xl font-black text-gray-800 tracking-tighter">
                         {Math.round(s.value || 0)}
-                        <span className="text-sm font-bold text-gray-400/50 ml-1">/100</span>
+                        <span className="text-sm font-bold text-gray-600/50 ml-1">/100</span>
                       </p>
                       <span className={`inline-block mt-3 px-3 py-0.5 rounded-full text-[8px] font-black uppercase ${color.bg} ${color.text}`}>
                         {nivel}
@@ -154,14 +154,14 @@ export default function DetalleAlumno() {
               {/* Gráfica de Evolución */}
               <section className="bg-white rounded-[35px] p-8 border border-gray-50 shadow-sm">
                 <div className="flex items-center justify-between mb-8">
-                  <h3 className="text-[10px] font-black text-gray-300 uppercase tracking-widest flex items-center gap-2">
+                  <h3 className="text-[12px] font-black text-gray-300 uppercase tracking-widest flex items-center gap-2">
                     <Activity size={14}/> Evolución Histórica
                   </h3>
                   <div className="flex gap-4">
                     {[['Ansiedad', '#F59E0B'], ['Estrés', '#EF4444'], ['Depresión', '#6366F1']].map(([l, c]) => (
                       <div key={l} className="flex items-center gap-1.5">
                         <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: c }}></div>
-                        <span className="text-[9px] font-black text-gray-400 uppercase tracking-tighter">{l}</span>
+                        <span className="text-[11px] font-black text-gray-600 uppercase tracking-tighter">{l}</span>
                       </div>
                     ))}
                   </div>
@@ -180,7 +180,7 @@ export default function DetalleAlumno() {
 
               {/* Recomendaciones IA */}
               <section className="bg-white rounded-[35px] p-8 border border-gray-50 shadow-sm">
-                <h3 className="text-[10px] font-black text-gray-300 uppercase tracking-widest flex items-center gap-2 mb-6">
+                <h3 className="text-[12px] font-black text-gray-300 uppercase tracking-widest flex items-center gap-2 mb-6">
                   <Sparkles size={14} className="text-[#D97706]"/> Sugerencias del Sistema
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -120,7 +120,7 @@ export default function Admin() {
     finally { setSaving(false) }
   }
 
-  if (loading) return <div className="h-screen w-full flex items-center justify-center bg-[#F9F9F7] text-[#8BA888] font-black text-[10px] tracking-[0.3em] animate-pulse">CARGANDO SISTEMA...</div>
+  if (loading) return <div className="h-screen w-full flex items-center justify-center bg-[#F9F9F7] text-[#8BA888] font-black text-[12px] tracking-[0.3em] animate-pulse">CARGANDO SISTEMA...</div>
 
   const filteredTutores = tutores.filter(t => t.nombre.toLowerCase().includes(searchTerm.toLowerCase()))
 
@@ -131,7 +131,7 @@ export default function Admin() {
       <main className="max-w-6xl mx-auto px-4 pt-10">
         <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <p className="text-[10px] font-black text-[#8BA888] uppercase tracking-[0.2em] mb-2 text-center md:text-left">Gestión de Plataforma</p>
+            <p className="text-[12px] font-black text-[#8BA888] uppercase tracking-[0.2em] mb-2 text-center md:text-left">Gestión de Plataforma</p>
             <h1 className="text-4xl font-black text-gray-800 tracking-tighter text-center md:text-left">Administración</h1>
           </div>
           <nav className="flex gap-1 bg-white/60 p-1.5 rounded-[24px] border border-gray-100 shadow-sm self-center">
@@ -139,8 +139,8 @@ export default function Admin() {
               <button
                 key={t.name}
                 onClick={() => setTab(t.name)}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-[20px] text-[10px] font-black uppercase tracking-wider transition-all ${
-                  tab === t.name ? 'bg-white text-gray-800 shadow-md shadow-gray-200/40' : 'text-gray-400 hover:text-gray-600'
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-[20px] text-[12px] font-black uppercase tracking-wider transition-all ${
+                  tab === t.name ? 'bg-white text-gray-800 shadow-md shadow-gray-200/40' : 'text-gray-600 hover:text-gray-600'
                 }`}
               >
                 <t.icon size={14} /> {t.name}
@@ -159,9 +159,9 @@ export default function Admin() {
                 { label: 'Carreras', value: carreras.length, sub: 'Oferta educativa', color: 'bg-[#E8EDDF] text-[#8BA888]' },
               ].map(s => (
                 <div key={s.label} className="bg-white rounded-[38px] p-8 border border-gray-50 shadow-sm">
-                  <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-4">{s.label}</p>
+                  <p className="text-[11px] font-black text-gray-300 uppercase tracking-widest mb-4">{s.label}</p>
                   <p className="text-5xl font-black text-gray-800 tracking-tighter">{s.value}</p>
-                  <span className={`inline-block mt-4 px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter ${s.color}`}>
+                  <span className={`inline-block mt-4 px-4 py-1 rounded-full text-[11px] font-black uppercase tracking-tighter ${s.color}`}>
                     {s.sub}
                   </span>
                 </div>
@@ -169,7 +169,7 @@ export default function Admin() {
             </div>
 
             <section className="bg-white rounded-[45px] p-10 border border-gray-100 shadow-sm">
-              <h3 className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] mb-10 flex items-center gap-2">
+              <h3 className="text-[12px] font-black text-gray-300 uppercase tracking-[0.2em] mb-10 flex items-center gap-2">
                 <ShieldCheck size={16} className="text-[#8BA888]"/> Salud Mental Institucional (Promedios)
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -186,7 +186,7 @@ export default function Admin() {
                     <div className="h-3 w-full bg-gray-50 rounded-full overflow-hidden border border-gray-100/50">
                       <div className={`h-full rounded-full transition-all duration-1000 ${s.bar}`} style={{width: `${s.value}%`}}></div>
                     </div>
-                    <p className="mt-2 text-[10px] font-bold text-gray-300 uppercase tracking-widest">Nivel {NIVEL(s.value)}</p>
+                    <p className="mt-2 text-[12px] font-bold text-gray-300 uppercase tracking-widest">Nivel {NIVEL(s.value)}</p>
                   </div>
                 ))}
               </div>
@@ -203,7 +203,7 @@ export default function Admin() {
                 <input 
                   type="text" 
                   placeholder="BUSCAR TUTOR POR NOMBRE..."
-                  className="w-full bg-white border border-gray-100 rounded-[22px] pl-12 pr-6 py-3.5 text-[10px] font-black uppercase tracking-widest text-gray-500 focus:ring-2 focus:ring-[#8BA888]/10 outline-none transition-all shadow-sm"
+                  className="w-full bg-white border border-gray-100 rounded-[22px] pl-12 pr-6 py-3.5 text-[12px] font-black uppercase tracking-widest text-gray-500 focus:ring-2 focus:ring-[#8BA888]/10 outline-none transition-all shadow-sm"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -215,11 +215,11 @@ export default function Admin() {
 
             <div className="bg-white rounded-[40px] border border-gray-100 shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-left">
+                <table className="w-full min-w-[800px] text-left">
                   <thead className="bg-[#F9F9F7]/50 border-b border-gray-50">
                     <tr>
                       {['Perfil de Usuario', 'Estatus', 'Carga Grupal', ''].map(h => (
-                        <th key={h} className="px-10 py-6 text-[9px] font-black text-gray-400 uppercase tracking-widest">{h}</th>
+                        <th key={h} className="px-10 py-6 text-[11px] font-black text-gray-600 uppercase tracking-widest">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -235,13 +235,13 @@ export default function Admin() {
                               </div>
                               <div>
                                 <p className="text-sm font-black text-gray-700 leading-none mb-1">{t.nombre}</p>
-                                <p className="text-[10px] font-bold text-gray-400 lowercase">{t.correo}</p>
+                                <p className="text-[12px] font-bold text-gray-600 lowercase">{t.correo}</p>
                               </div>
                             </div>
                           </td>
                           <td className="px-10 py-6">
                             <span className={`px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${
-                              t.rol === 'admin' ? 'bg-indigo-50 text-indigo-400' : inactivo ? 'bg-gray-100 text-gray-400' : 'bg-[#E8EDDF] text-[#8BA888]'
+                              t.rol === 'admin' ? 'bg-indigo-50 text-indigo-400' : inactivo ? 'bg-gray-100 text-gray-600' : 'bg-[#E8EDDF] text-[#8BA888]'
                             }`}>
                               {t.rol}
                             </span>
@@ -277,27 +277,27 @@ export default function Admin() {
             {grupos.map(g => (
               <div key={g.id} className="bg-white rounded-[38px] p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-gray-200/20 transition-all group">
                 <div className="flex justify-between items-start mb-6">
-                  <span className="text-[9px] font-black bg-[#F9F9F7] text-gray-400 px-4 py-1.5 rounded-full uppercase tracking-widest border border-gray-50">
+                  <span className="text-[11px] font-black bg-[#F9F9F7] text-gray-600 px-4 py-1.5 rounded-full uppercase tracking-widest border border-gray-50">
                     {g.carreras?.siglas || 'S/C'}
                   </span>
-                  <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-[10px] font-black text-indigo-300">
+                  <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-[12px] font-black text-indigo-300">
                     {g.cuatrimestre}°
                   </div>
                 </div>
                 <h4 className="text-xl font-black text-gray-700 mb-8 tracking-tighter leading-tight group-hover:text-[#8BA888] transition-colors">{g.nombre}</h4>
                 <div className="flex items-center justify-between pt-6 border-t border-gray-50">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-[#F9F9F7] flex items-center justify-center text-[10px] font-black text-gray-400">
+                    <div className="w-8 h-8 rounded-xl bg-[#F9F9F7] flex items-center justify-center text-[12px] font-black text-gray-600">
                       {g.tutores?.nombre?.[0] || '?'}
                     </div>
                     <div>
                       <p className="text-[8px] font-black text-gray-300 uppercase tracking-widest">Tutor</p>
-                      <p className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter truncate max-w-[100px]">
+                      <p className="text-[12px] font-bold text-gray-500 uppercase tracking-tighter truncate max-w-[100px]">
                         {g.tutores?.nombre || 'Sin asignar'}
                       </p>
                     </div>
                   </div>
-                  <button onClick={() => abrirReasignar(g)} className="bg-gray-50 text-[9px] font-black text-gray-400 uppercase tracking-widest px-4 py-2 rounded-xl hover:bg-[#8BA888] hover:text-white transition-all">
+                  <button onClick={() => abrirReasignar(g)} className="bg-gray-50 text-[11px] font-black text-gray-600 uppercase tracking-widest px-4 py-2 rounded-xl hover:bg-[#8BA888] hover:text-white transition-all">
                     Reasignar
                   </button>
                 </div>
@@ -323,7 +323,7 @@ export default function Admin() {
                     </div>
                     <div>
                       <h4 className="text-base font-black text-gray-700 uppercase tracking-tight leading-tight">{c.nombre}</h4>
-                      <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest mt-1">
+                      <p className="text-[12px] font-bold text-gray-300 uppercase tracking-widest mt-1">
                         {grupos.filter(g => g.carreras?.id === c.id).length} Grupos registrados
                       </p>
                     </div>
@@ -346,7 +346,7 @@ export default function Admin() {
               <h2 className="text-3xl font-black text-gray-800 tracking-tighter mb-2">
                 {modalTutor.mode === 'crear' ? 'Nuevo Tutor' : 'Editar Perfil'}
               </h2>
-              <p className="text-[10px] font-black text-[#8BA888] uppercase tracking-[0.2em]">Credenciales de acceso</p>
+              <p className="text-[12px] font-black text-[#8BA888] uppercase tracking-[0.2em]">Credenciales de acceso</p>
             </header>
             
             <div className="space-y-5 mb-10">
@@ -356,7 +356,7 @@ export default function Admin() {
                 { key: 'password', label: modalTutor.mode === 'editar' ? 'Actualizar Contraseña (Opcional)' : 'Contraseña de Acceso', type: 'password', icon: ShieldCheck },
               ].map(f => (
                 <div key={f.key} className="relative">
-                  <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest ml-5 mb-2">{f.label}</label>
+                  <label className="block text-[11px] font-black text-gray-600 uppercase tracking-widest ml-5 mb-2">{f.label}</label>
                   <input
                     type={f.type}
                     value={tutorForm[f.key]}
@@ -368,7 +368,7 @@ export default function Admin() {
               ))}
             </div>
 
-            {error && <div className="bg-rose-50 text-rose-400 text-[10px] font-black uppercase p-4 rounded-2xl mb-6 text-center tracking-widest">{error}</div>}
+            {error && <div className="bg-rose-50 text-rose-400 text-[12px] font-black uppercase p-4 rounded-2xl mb-6 text-center tracking-widest">{error}</div>}
 
             <div className="flex gap-4">
               <button onClick={() => setModalTutor({open: false})} className="flex-1 py-4 text-[11px] font-black uppercase text-gray-300 hover:text-gray-500 transition-colors">Cancelar</button>
@@ -389,7 +389,7 @@ export default function Admin() {
             </h2>
             <div className="space-y-6 mb-10">
               <div>
-                <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest ml-5 mb-2">Nombre Académico</label>
+                <label className="block text-[11px] font-black text-gray-600 uppercase tracking-widest ml-5 mb-2">Nombre Académico</label>
                 <input
                   type="text"
                   value={carreraForm.nombre}
@@ -399,7 +399,7 @@ export default function Admin() {
                 />
               </div>
               <div>
-                <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest ml-5 mb-2">Siglas (Ej: DS, AF, ME)</label>
+                <label className="block text-[11px] font-black text-gray-600 uppercase tracking-widest ml-5 mb-2">Siglas (Ej: DS, AF, ME)</label>
                 <input
                   type="text"
                   value={carreraForm.siglas}
@@ -428,11 +428,11 @@ export default function Admin() {
                 <Layers size={24}/>
               </div>
               <h2 className="text-xl font-black text-gray-800 tracking-tighter">Reasignar Grupo</h2>
-              <p className="text-[10px] font-bold text-gray-300 uppercase mt-1 tracking-widest">{modalGrupo.grupo?.nombre}</p>
+              <p className="text-[12px] font-bold text-gray-300 uppercase mt-1 tracking-widest">{modalGrupo.grupo?.nombre}</p>
             </header>
             
             <div className="mb-10">
-              <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest ml-4 mb-2">Seleccionar Nuevo Tutor</label>
+              <label className="block text-[11px] font-black text-gray-600 uppercase tracking-widest ml-4 mb-2">Seleccionar Nuevo Tutor</label>
               <select
                 value={tutorSeleccionado}
                 onChange={e => setTutorSeleccionado(e.target.value)}
@@ -465,7 +465,7 @@ export default function Admin() {
             <h2 className="text-2xl font-black text-gray-800 tracking-tighter mb-3">
               {modalConfirm.rol === 'inactivo' ? '¿Reactivar?' : '¿Suspender?'}
             </h2>
-            <p className="text-[11px] font-medium text-gray-400 leading-relaxed mb-10 px-2">
+            <p className="text-[11px] font-medium text-gray-600 leading-relaxed mb-10 px-2">
               El tutor <span className="font-black text-gray-600">{modalConfirm.nombre}</span> {modalConfirm.rol === 'inactivo' ? 'recuperará' : 'perderá'} el acceso al sistema de forma inmediata.
             </p>
             <div className="flex flex-col gap-3">

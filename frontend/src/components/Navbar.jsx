@@ -30,7 +30,7 @@ export default function Navbar() {
           <span className="text-xl font-black text-gray-800 tracking-tighter">
             Seren<span className="text-[#8BA888]">IA</span>
           </span>
-          <span className="text-[8px] font-black uppercase tracking-[0.4em] text-gray-400">
+          <span className="text-[8px] font-black uppercase tracking-[0.4em] text-gray-600">
             Wellness
           </span>
         </div>
@@ -47,7 +47,7 @@ export default function Navbar() {
           </div>
           
           <div className="text-left hidden sm:block">
-            <p className="text-[9px] font-black text-[#8BA888] uppercase tracking-[0.2em] leading-none mb-1">
+            <p className="text-[11px] font-black text-[#8BA888] uppercase tracking-[0.2em] leading-none mb-1">
               {user?.rol || 'Estudiante'}
             </p>
             <p className="text-sm font-black text-gray-800 tracking-tight leading-none">
@@ -59,7 +59,7 @@ export default function Navbar() {
         {/* Botón Salir - Más sutil */}
         <button
           onClick={handleLogout}
-          className="p-3 rounded-2xl bg-white/40 border border-white/60 text-gray-400 hover:text-rose-500 hover:bg-rose-50 transition-all shadow-sm group"
+          className="p-3 rounded-2xl bg-white/40 border border-white/60 text-gray-600 hover:text-rose-500 hover:bg-rose-50 transition-all shadow-sm group"
           title="Cerrar Sesión"
         >
           <LogOut size={18} className="group-hover:translate-x-0.5 transition-transform" />

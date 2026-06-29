@@ -101,12 +101,12 @@ export default function Login() {
     w-full px-7 py-4 bg-[#F9F9F7] rounded-[22px] outline-none border transition-all text-sm font-bold
     ${errors[fieldName]
       ? 'border-rose-400 bg-rose-50/50 text-rose-900 placeholder:text-rose-300'
-      : 'border-transparent focus:border-[#8BA888]/40 focus:bg-white text-gray-700 placeholder:text-gray-400'}
+      : 'border-transparent focus:border-[#8BA888]/40 focus:bg-white text-gray-700 placeholder:text-gray-600'}
     disabled:opacity-50
   `;
 
   const InputError = ({ message }) => message ? (
-    <span className="text-[10px] text-rose-500 font-bold ml-5 mt-1 flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
+    <span className="text-[12px] text-rose-500 font-bold ml-5 mt-1 flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
       <AlertCircle size={10} /> {message}
     </span>
   ) : null;
@@ -122,7 +122,7 @@ export default function Login() {
           <h1 className="text-5xl font-black tracking-tighter text-gray-800">
             Seren<span className="text-[#8BA888]">IA</span>
           </h1>
-          <p className="text-[9px] font-black text-gray-500 tracking-[.3em] uppercase mt-3 italic">
+          <p className="text-[11px] font-black text-gray-500 tracking-[.3em] uppercase mt-3 italic">
             Universidad Tecnológica de San Juan del Río
           </p>
         </header>
@@ -143,7 +143,7 @@ export default function Login() {
         <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           {/* Campo Correo */}
           <div className="space-y-1">
-            <label className="text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] ml-5">Correo Institucional</label>
+            <label className="text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-5">Correo Institucional</label>
             <input
               type="email"
               name="correo"
@@ -158,7 +158,7 @@ export default function Login() {
 
           {/* Campo Password */}
           <div className="space-y-1 relative">
-            <label className="text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] ml-5">Contraseña</label>
+            <label className="text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-5">Contraseña</label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -172,7 +172,7 @@ export default function Login() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className={`absolute right-6 top-1/2 -translate-y-1/2 transition-colors ${errors.password ? 'text-rose-400' : 'text-gray-400 hover:text-[#8BA888]'}`}
+                className={`absolute right-6 top-1/2 -translate-y-1/2 transition-colors ${errors.password ? 'text-rose-400' : 'text-gray-600 hover:text-[#8BA888]'}`}
                 tabIndex="-1"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -182,7 +182,7 @@ export default function Login() {
             <div className="text-right pr-2">
               <Link
                 to="/forgot-password"
-                className="text-[9px] font-black text-gray-400 hover:text-[#8BA888] transition-colors uppercase tracking-widest"
+                className="text-[11px] font-black text-gray-600 hover:text-[#8BA888] transition-colors uppercase tracking-widest"
               >
                 ¿Olvidaste tu contraseña?
               </Link>
@@ -191,7 +191,7 @@ export default function Login() {
 
           {/* Error General / Bloqueo */}
           {errors.general && (
-            <div className="flex items-center justify-center gap-2 bg-rose-50 text-rose-600 text-[10px] font-black uppercase p-4 rounded-[20px] text-center tracking-widest border border-rose-100 animate-in fade-in zoom-in-95 duration-300">
+            <div className="flex items-center justify-center gap-2 bg-rose-50 text-rose-600 text-[12px] font-black uppercase p-4 rounded-[20px] text-center tracking-widest border border-rose-100 animate-in fade-in zoom-in-95 duration-300">
               <XCircle size={14} />
               {errors.general}
             </div>
@@ -209,11 +209,11 @@ export default function Login() {
 
         <footer className="mt-8 text-center">
           {!isTutorMode ? (
-            <Link to="/register" className="text-[10px] font-black text-gray-500 hover:text-[#8BA888] transition-colors uppercase tracking-widest">
+            <Link to="/register" className="text-[12px] font-black text-gray-500 hover:text-[#8BA888] transition-colors uppercase tracking-widest">
               ¿No tienes cuenta? <span className="underline underline-offset-4 text-gray-700 hover:text-[#8BA888]">Regístrate</span>
             </Link>
           ) : (
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest italic">
+            <p className="text-[12px] font-black text-gray-600 uppercase tracking-widest italic">
               — SerenIA Management System —
             </p>
           )}

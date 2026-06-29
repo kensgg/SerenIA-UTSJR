@@ -84,12 +84,12 @@ export default function ResetPassword() {
     w-full px-7 py-4 bg-[#F9F9F7] rounded-[22px] outline-none border transition-all text-sm font-bold
     ${errors[fieldName]
       ? 'border-rose-400 bg-rose-50/50 text-rose-900 placeholder:text-rose-300'
-      : 'border-transparent focus:border-[#8BA888]/40 focus:bg-white text-gray-700 placeholder:text-gray-400'}
+      : 'border-transparent focus:border-[#8BA888]/40 focus:bg-white text-gray-700 placeholder:text-gray-600'}
     disabled:opacity-50
   `;
 
   const InputError = ({ message }) => message ? (
-    <span className="text-[10px] text-rose-500 font-bold ml-5 mt-1 flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
+    <span className="text-[12px] text-rose-500 font-bold ml-5 mt-1 flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
       <AlertCircle size={10} /> {message}
     </span>
   ) : null;
@@ -107,7 +107,7 @@ export default function ResetPassword() {
           <h1 className="text-5xl font-black tracking-tighter text-gray-800">
             Seren<span className="text-[#8BA888]">IA</span>
           </h1>
-          <p className="text-[9px] font-black text-gray-500 tracking-[.3em] uppercase mt-3 italic">
+          <p className="text-[11px] font-black text-gray-500 tracking-[.3em] uppercase mt-3 italic">
             Universidad Tecnológica de San Juan del Río
           </p>
         </header>
@@ -122,14 +122,14 @@ export default function ResetPassword() {
               <h2 className="text-2xl font-black text-gray-800 tracking-tight">
                 Nueva Contraseña
               </h2>
-              <p className="text-[11px] text-gray-400 font-semibold mt-2 leading-relaxed">
+              <p className="text-[11px] text-gray-600 font-semibold mt-2 leading-relaxed">
                 Elige una contraseña segura de al menos 8 caracteres.
               </p>
             </div>
 
             {/* Error general (token inválido/expirado) */}
             {errors.general && (
-              <div className="flex items-center justify-center gap-2 bg-rose-50 text-rose-600 text-[10px] font-black uppercase p-4 rounded-[20px] text-center tracking-widest border border-rose-100 mb-4 animate-in fade-in zoom-in-95 duration-300">
+              <div className="flex items-center justify-center gap-2 bg-rose-50 text-rose-600 text-[12px] font-black uppercase p-4 rounded-[20px] text-center tracking-widest border border-rose-100 mb-4 animate-in fade-in zoom-in-95 duration-300">
                 <XCircle size={14} />
                 {errors.general}
               </div>
@@ -138,7 +138,7 @@ export default function ResetPassword() {
             <form onSubmit={handleSubmit} className="space-y-4" noValidate>
               {/* Nueva contraseña */}
               <div className="space-y-1">
-                <label className="text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] ml-5">
+                <label className="text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-5">
                   Nueva Contraseña
                 </label>
                 <div className="relative">
@@ -155,7 +155,7 @@ export default function ResetPassword() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className={`absolute right-6 top-1/2 -translate-y-1/2 transition-colors ${errors.password ? 'text-rose-400' : 'text-gray-400 hover:text-[#8BA888]'}`}
+                    className={`absolute right-6 top-1/2 -translate-y-1/2 transition-colors ${errors.password ? 'text-rose-400' : 'text-gray-600 hover:text-[#8BA888]'}`}
                     tabIndex="-1"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -166,7 +166,7 @@ export default function ResetPassword() {
 
               {/* Confirmar contraseña */}
               <div className="space-y-1">
-                <label className="text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] ml-5">
+                <label className="text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] ml-5">
                   Confirmar Contraseña
                 </label>
                 <div className="relative">
@@ -183,7 +183,7 @@ export default function ResetPassword() {
                   <button
                     type="button"
                     onClick={() => setShowConfirm(!showConfirm)}
-                    className={`absolute right-6 top-1/2 -translate-y-1/2 transition-colors ${errors.confirm ? 'text-rose-400' : 'text-gray-400 hover:text-[#8BA888]'}`}
+                    className={`absolute right-6 top-1/2 -translate-y-1/2 transition-colors ${errors.confirm ? 'text-rose-400' : 'text-gray-600 hover:text-[#8BA888]'}`}
                     tabIndex="-1"
                   >
                     {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -209,7 +209,7 @@ export default function ResetPassword() {
                       />
                     ))}
                   </div>
-                  <p className="text-[9px] font-bold text-gray-400">
+                  <p className="text-[11px] font-bold text-gray-600">
                     {form.password.length < 4 ? 'Muy débil'
                       : form.password.length < 8 ? 'Débil'
                       : form.password.length < 12 ? 'Aceptable'
@@ -242,7 +242,7 @@ export default function ResetPassword() {
               Ya puedes iniciar sesión con tu nueva contraseña.
             </p>
             <div className="bg-[#F9F9F7] rounded-[20px] border border-gray-100 p-4 mb-6">
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+              <p className="text-[12px] font-black text-gray-600 uppercase tracking-widest">
                 Redirigiendo al inicio de sesión en
               </p>
               <p className="text-4xl font-black text-[#8BA888] mt-1">{countdown}</p>
@@ -260,7 +260,7 @@ export default function ResetPassword() {
           <footer className="mt-8 text-center">
             <Link
               to="/login"
-              className="inline-flex items-center gap-2 text-[10px] font-black text-gray-400 hover:text-[#8BA888] transition-colors uppercase tracking-widest"
+              className="inline-flex items-center gap-2 text-[12px] font-black text-gray-600 hover:text-[#8BA888] transition-colors uppercase tracking-widest"
             >
               <ArrowLeft size={12} /> Volver al inicio de sesión
             </Link>
