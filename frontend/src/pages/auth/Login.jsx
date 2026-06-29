@@ -34,7 +34,7 @@ export default function Login() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: name === 'correo' ? value.trim() : value }));
-    
+
     // Limpiar error específico al escribir para mejorar UX
     if (errors[name] || errors.general) {
       setErrors(prev => ({ ...prev, [name]: null, general: null }));
@@ -71,7 +71,7 @@ export default function Login() {
         correo: form.correo.toLowerCase(),
         password: form.password
       });
-      
+
       const decoded = jwtDecode(data.token);
       login(data.token, { id: decoded.id, rol: decoded.rol, correo: decoded.correo });
 
@@ -81,7 +81,7 @@ export default function Login() {
     } catch (err) {
       setAttempts(prev => prev + 1);
       const status = err.response?.status;
-      
+
       // LOGICA DE ERRORES ESPECIFICOS
       if (status === 404) {
         setErrors({ correo: 'Este correo no está registrado en el sistema' });
@@ -99,8 +99,8 @@ export default function Login() {
 
   const inputClass = (fieldName) => `
     w-full px-7 py-4 bg-[#F9F9F7] rounded-[22px] outline-none border transition-all text-sm font-bold
-    ${errors[fieldName] 
-      ? 'border-rose-400 bg-rose-50/50 text-rose-900 placeholder:text-rose-300' 
+    ${errors[fieldName]
+      ? 'border-rose-400 bg-rose-50/50 text-rose-900 placeholder:text-rose-300'
       : 'border-transparent focus:border-[#8BA888]/40 focus:bg-white text-gray-700 placeholder:text-gray-400'}
     disabled:opacity-50
   `;
@@ -128,13 +128,12 @@ export default function Login() {
         </header>
 
         <div className="mb-8 text-center">
-          <div className={`inline-flex items-center gap-2 px-6 py-2 rounded-full border-2 mb-4 transition-all duration-500 ${
-            isTutorMode ? 'bg-gray-800 border-gray-800 text-white' : 'bg-[#8BA888]/10 border-[#8BA888] text-[#8BA888]'
-          }`}>
-             {isTutorMode ? <ShieldCheck size={14}/> : <User size={14}/>}
-             <span className="text-[11px] font-black uppercase tracking-[.15em]">
-               {isTutorMode ? 'Portal de Gestión' : 'Acceso Estudiantil'}
-             </span>
+          <div className={`inline-flex items-center gap-2 px-6 py-2 rounded-full border-2 mb-4 transition-all duration-500 ${isTutorMode ? 'bg-gray-800 border-gray-800 text-white' : 'bg-[#8BA888]/10 border-[#8BA888] text-[#8BA888]'
+            }`}>
+            {isTutorMode ? <ShieldCheck size={14} /> : <User size={14} />}
+            <span className="text-[11px] font-black uppercase tracking-[.15em]">
+              {isTutorMode ? 'Portal de Tutor' : 'Acceso Estudiantil'}
+            </span>
           </div>
           <h2 className="text-2xl font-black text-gray-800 tracking-tight">
             {isTutorMode ? 'Personal Administrativo' : 'Bienvenido de nuevo'}
@@ -180,16 +179,14 @@ export default function Login() {
               </button>
             </div>
             <InputError message={errors.password} />
-            {!isTutorMode && (
-              <div className="text-right pr-2">
-                <Link
-                  to="/forgot-password"
-                  className="text-[9px] font-black text-gray-400 hover:text-[#8BA888] transition-colors uppercase tracking-widest"
-                >
-                  ¿Olvidaste tu contraseña?
-                </Link>
-              </div>
-            )}
+            <div className="text-right pr-2">
+              <Link
+                to="/forgot-password"
+                className="text-[9px] font-black text-gray-400 hover:text-[#8BA888] transition-colors uppercase tracking-widest"
+              >
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </div>
           </div>
 
           {/* Error General / Bloqueo */}
@@ -225,14 +222,13 @@ export default function Login() {
 
       {/* Toggle Mode Button */}
       <button
-        onClick={() => { 
-          setIsTutorMode(!isTutorMode); 
-          setErrors({}); 
-          setForm({ correo: '', password: '' }); 
+        onClick={() => {
+          setIsTutorMode(!isTutorMode);
+          setErrors({});
+          setForm({ correo: '', password: '' });
         }}
-        className={`fixed bottom-6 right-6 md:bottom-10 md:right-10 flex items-center justify-center gap-3 p-4 md:px-6 md:py-4 rounded-full md:rounded-[24px] shadow-2xl transition-all duration-500 active:scale-90 z-[100] border border-white/50 backdrop-blur-sm ${
-          isTutorMode ? 'bg-[#8BA888] text-white' : 'bg-white text-gray-800'
-        }`}
+        className={`fixed bottom-6 right-6 md:bottom-10 md:right-10 flex items-center justify-center gap-3 p-4 md:px-6 md:py-4 rounded-full md:rounded-[24px] shadow-2xl transition-all duration-500 active:scale-90 z-[100] border border-white/50 backdrop-blur-sm ${isTutorMode ? 'bg-[#8BA888] text-white' : 'bg-white text-gray-800'
+          }`}
       >
         <div className={`p-2 rounded-xl ${isTutorMode ? 'bg-white/20' : 'bg-[#F9F9F7]'}`}>
           {isTutorMode ? <User size={20} /> : <ShieldCheck size={20} />}

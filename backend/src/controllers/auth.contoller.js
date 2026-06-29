@@ -89,15 +89,26 @@ export const forgotPassword = async (req, res) => {
             return res.status(400).json({ error: 'El correo es obligatorio' });
         }
 
-        // Verificar que el alumno exista (sin revelar si existe o no por seguridad)
+        // Verificar que el usuario exista (sin revelar si existe o no por seguridad)
         const { data: alumno } = await supabase
             .from('alumnos')
             .select('correo')
             .eq('correo', correo.toLowerCase().trim())
             .single();
 
+        let userExists = !!alumno;
+
+        if (!userExists) {
+            const { data: tutor } = await supabase
+                .from('tutores')
+                .select('correo')
+                .eq('correo', correo.toLowerCase().trim())
+                .single();
+            userExists = !!tutor;
+        }
+
         // Respuesta genérica para evitar enumeración de correos
-        if (!alumno) {
+        if (!userExists) {
             return res.status(200).json({
                 message: 'Si ese correo está registrado, recibirás un enlace en breve.'
             });
@@ -173,11 +184,28 @@ export const resetPassword = async (req, res) => {
         // Hashear la nueva contraseña
         const password_hash = await bcrypt.hash(newPassword, 10);
 
-        // Actualizar la contraseña del alumno
-        const { error: updateError } = await supabase
+        // Verificar a qué tabla pertenece el usuario
+        const { data: alumno } = await supabase
             .from('alumnos')
-            .update({ password_hash })
-            .eq('correo', resetData.correo);
+            .select('id')
+            .eq('correo', resetData.correo)
+            .single();
+
+        let updateError = null;
+
+        if (alumno) {
+            const { error } = await supabase
+                .from('alumnos')
+                .update({ password_hash })
+                .eq('correo', resetData.correo);
+            updateError = error;
+        } else {
+            const { error } = await supabase
+                .from('tutores')
+                .update({ password_hash })
+                .eq('correo', resetData.correo);
+            updateError = error;
+        }
 
         if (updateError) {
             console.error('[resetPassword] Error actualizando contraseña:', updateError);
