@@ -6,7 +6,8 @@ import {
     obtenerGrupos,
     obtenerMisGrupos,
     editarGrupo,
-    eliminarGrupo
+    eliminarGrupo,
+    cambiarEstadoGrupo
 } from '../controllers/grupos.controller.js';
 
 const router = express.Router();
@@ -16,6 +17,7 @@ router.get('/mis-grupos', verifyToken, isTutor, obtenerMisGrupos);
 
 router.post('/', verifyToken, isTutor, crearGrupo);
 router.put('/:id', verifyToken, isTutor, editarGrupo);
+router.patch('/:id/estado', verifyToken, isTutor, cambiarEstadoGrupo);
 router.delete('/:id', verifyToken, isTutor, eliminarGrupo);
 
 export default router;

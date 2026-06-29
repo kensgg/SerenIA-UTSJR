@@ -2,14 +2,15 @@ import { useEffect, useState, useMemo, lazy, Suspense } from 'react'
 import Navbar from '../../components/Navbar'
 import {
   Users, Plus, Search,
-  ChevronRight, Edit3, X, Trash2
+  ChevronRight, Edit3, X, Trash2, Pause, Play
 } from 'lucide-react'
 import { 
   getMisGrupos, 
   getMisAlumnos, 
   crearGrupo, 
   editarGrupo, 
-  eliminarGrupo 
+  eliminarGrupo,
+  cambiarEstadoGrupo
 } from '../../api/tutores.api'
 import { getCarreras } from '../../api/auth.api'
 import PerfilModal from '../../components/PerfilModal'
@@ -43,6 +44,7 @@ export default function TutorDashboard() {
   const [loading, setLoading] = useState(true)
   const [busqueda, setBusqueda] = useState('')
   const [riesgoFiltro, setRiesgoFiltro] = useState('todos')
+  const [grupoFiltro, setGrupoFiltro] = useState('')
   const [modal, setModal] = useState({ open: false, mode: 'crear', grupo: null })
   const [alumnoSeleccionado, setAlumnoSeleccionado] = useState(null)
   const [formGrupo, setFormGrupo] = useState({ nombre: '', carrera_id: '', cuatrimestre: '' })
@@ -51,7 +53,10 @@ export default function TutorDashboard() {
 
   const cargarDatos = () => {
     setLoading(true)
-    Promise.all([getMisGrupos(), getMisAlumnos()])
+    Promise.all([
+      getMisGrupos(), 
+      getMisAlumnos(grupoFiltro ? { grupo_id: grupoFiltro } : {})
+    ])
       .then(([g, a]) => {
         setGrupos(g.data?.data || g.data || [])
         setAlumnos(a.data?.data || a.data || [])
@@ -63,14 +68,16 @@ export default function TutorDashboard() {
   useEffect(() => {
     cargarDatos()
     getCarreras().then(({ data }) => setCarreras(Array.isArray(data) ? data : []))
-  }, [])
+  }, [grupoFiltro])
 
   const alumnosProcesados = useMemo(() => {
     if (!Array.isArray(alumnos)) return []
-    return alumnos.map(a => {
-      const ans = Number(a.ans) || Number(a.estadisticas?.ansiedad) || 0
-      const est = Number(a.est) || Number(a.estadisticas?.estres)   || 0
-      const dep = Number(a.dep) || Number(a.estadisticas?.depresion)|| 0
+    return alumnos
+      .filter(a => a.grupos?.estado !== 'inactivo')
+      .map(a => {
+        const ans = Number(a.ans) || Number(a.estadisticas?.ansiedad) || 0
+        const est = Number(a.est) || Number(a.estadisticas?.estres)   || 0
+        const dep = Number(a.dep) || Number(a.estadisticas?.depresion)|| 0
       const maxVal = Math.max(ans, est, dep)
       return {
         ...a, ans, est, dep, maxVal,
@@ -147,18 +154,52 @@ export default function TutorDashboard() {
                 <button onClick={() => { setFormGrupo({ nombre: '', carrera_id: '', cuatrimestre: '' }); setModal({ open: true, mode: 'crear' }); }} className="p-2 bg-[#8BA888] text-white rounded-xl shadow-md"><Plus size={18} /></button>
               </div>
               <div className="space-y-3">
-                {grupos.map(g => (
+                {grupos.filter(g => g.estado !== 'inactivo').map(g => (
                   <div key={g.id} className="bg-white p-4 rounded-2xl border border-gray-50 flex justify-between items-center group">
                     <div>
-                      <p className="font-black text-gray-800 text-sm">{g.nombre}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-black text-gray-800 text-sm">{g.nombre}</p>
+                      </div>
                       <p className="text-[9px] font-bold text-gray-400 uppercase">{g.cuatrimestre}° Cuatrimestre</p>
                     </div>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={async () => {
+                        await cambiarEstadoGrupo(g.id, 'inactivo');
+                        cargarDatos();
+                      }} className="p-2 text-gray-300 hover:text-orange-400" title="Pausar Grupo">
+                        <Pause size={14} />
+                      </button>
                       <button onClick={() => { setFormGrupo(g); setModal({ open: true, mode: 'editar', grupo: g }); }} className="p-2 text-gray-300 hover:text-[#8BA888]"><Edit3 size={14} /></button>
                       <button onClick={async () => { if(window.confirm("¿Eliminar?")) { await eliminarGrupo(g.id); cargarDatos(); }}} className="p-2 text-gray-300 hover:text-red-500"><Trash2 size={14} /></button>
                     </div>
                   </div>
                 ))}
+
+                {/* Grupos Inactivos */}
+                {grupos.filter(g => g.estado === 'inactivo').length > 0 && (
+                  <div className="pt-4 mt-4 border-t border-gray-100">
+                    <h4 className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-3">Grupos Pausados</h4>
+                    {grupos.filter(g => g.estado === 'inactivo').map(g => (
+                      <div key={g.id} className="bg-gray-50 p-4 rounded-2xl border border-gray-200 opacity-70 flex justify-between items-center group mb-2">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <p className="font-black text-gray-500 text-sm line-through">{g.nombre}</p>
+                          </div>
+                          <p className="text-[9px] font-bold text-gray-400 uppercase">{g.cuatrimestre}° Cuatrimestre</p>
+                        </div>
+                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button onClick={async () => {
+                            await cambiarEstadoGrupo(g.id, 'activo');
+                            cargarDatos();
+                          }} className="p-2 text-gray-400 hover:text-[#8BA888]" title="Reactivar Grupo">
+                            <Play size={14} />
+                          </button>
+                          <button onClick={async () => { if(window.confirm("¿Eliminar?")) { await eliminarGrupo(g.id); cargarDatos(); }}} className="p-2 text-gray-300 hover:text-red-500"><Trash2 size={14} /></button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -224,13 +265,17 @@ export default function TutorDashboard() {
             <div className="lg:col-span-12 bg-white rounded-[40px] p-8 border border-gray-50 shadow-sm">
               <div className="flex flex-col md:flex-row gap-4 mb-8 items-center justify-between">
                 <div><h3 className="text-lg font-black text-gray-800 tracking-tighter">Estudiantes</h3><p className="text-[10px] text-gray-400">Selecciona para ver detalle</p></div>
-                <div className="flex gap-3">
+                <div className="flex gap-3 flex-wrap">
                   <div className="relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={15} />
-                    <input value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Buscar..." className="pl-11 pr-5 py-3 bg-[#F9F9F7] rounded-2xl text-sm font-bold outline-none w-56" />
+                    <input value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Buscar..." className="pl-11 pr-5 py-3 bg-[#F9F9F7] rounded-2xl text-sm font-bold outline-none w-48" />
                   </div>
+                  <select value={grupoFiltro} onChange={e => setGrupoFiltro(e.target.value)} className="px-5 py-3 bg-[#F9F9F7] rounded-2xl text-[10px] font-black uppercase outline-none text-gray-600">
+                    <option value="">Todos los Grupos</option>
+                    {grupos.map(g => <option key={g.id} value={g.id}>{g.nombre} {g.estado === 'inactivo' ? '(Pausado)' : ''}</option>)}
+                  </select>
                   <select value={riesgoFiltro} onChange={e => setRiesgoFiltro(e.target.value)} className="px-5 py-3 bg-[#F9F9F7] rounded-2xl text-[10px] font-black uppercase outline-none text-gray-600">
-                    <option value="todos">Todos</option><option value="Crítico">Crítico</option><option value="Alto">Alto</option><option value="Moderado">Moderado</option><option value="Bajo">Bajo</option>
+                    <option value="todos">Todos los Riesgos</option><option value="Crítico">Crítico</option><option value="Alto">Alto</option><option value="Moderado">Moderado</option><option value="Bajo">Bajo</option>
                   </select>
                 </div>
               </div>

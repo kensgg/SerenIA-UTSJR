@@ -49,12 +49,13 @@ export const loginTutor = async (req,res) =>{
 export const obtenerAlumnosTutor = async (req, res) => {
     try {
         const tutor_id = req.user.id;
+        const grupo_id = req.query.grupo_id;
 
-        const { data, error } = await supabase
+        let query = supabase
             .from('alumnos')
             .select(`
                 id, nombre, ape_p, ape_m, correo, genero,
-                grupos!inner(id, nombre, tutor_id),
+                grupos!inner(id, nombre, tutor_id, estado),
                 carreras(nombre),
                 respuestas(
                     puntaje,
@@ -67,6 +68,12 @@ export const obtenerAlumnosTutor = async (req, res) => {
                 )
             `)
             .eq('grupos.tutor_id', tutor_id);
+
+        if (grupo_id) {
+            query = query.eq('grupos.id', grupo_id);
+        }
+
+        const { data, error } = await query;
 
         if (error) return res.status(400).json(error);
 

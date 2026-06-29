@@ -105,6 +105,7 @@ export const obtenerMisGrupos = async (req, res) => {
             .select(`
                 id,
                 nombre,
+                estado,
                 carreras (
                     nombre
                 )
@@ -139,6 +140,34 @@ export const eliminarGrupo = async (req, res) => {
             message: 'Grupo eliminado'
         });
 
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+export const cambiarEstadoGrupo = async (req, res) => {
+    try {
+        const grupo_id = req.params.id;
+        const tutor_id = req.user.id;
+        const { estado } = req.body;
+
+        if (estado !== 'activo' && estado !== 'inactivo') {
+            return res.status(400).json({ error: 'Estado inválido' });
+        }
+
+        const { data, error } = await supabase
+            .from('grupos')
+            .update({ estado })
+            .eq('id', grupo_id)
+            .eq('tutor_id', tutor_id)
+            .select();
+
+        if (error) return res.status(400).json(error);
+
+        res.json({
+            message: 'Estado del grupo actualizado',
+            grupo: data[0]
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
