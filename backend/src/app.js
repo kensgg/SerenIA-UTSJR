@@ -24,17 +24,21 @@ const app = express();
 
 // --- CONFIGURACIÓN DE CORS ---
 const allowedOrigins = [
-  'http://localhost:5173',          // Desarrollo local
-  'http://127.0.0.1:5173',        // Desarrollo local alternativo
-  process.env.FRONTEND_URL        // URL de producción (se configura en Railway)
-];
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  process.env.FRONTEND_URL ? process.env.FRONTEND_URL.trim().replace(/\/$/, '') : null
+].filter(Boolean);
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Permitir si no hay origin (postman, etc) o si el origin coincide exactamente (ignorando slash final)
+    if (!origin) return callback(null, true);
+    
+    const cleanOrigin = origin.trim().replace(/\/$/, '');
+    if (allowedOrigins.includes(cleanOrigin)) {
       callback(null, true);
     } else {
-      console.error(`Bloqueado por CORS: ${origin}`);
+      console.error(`Bloqueado por CORS: origin recibido -> ${origin}, permitidos ->`, allowedOrigins);
       callback(new Error('No permitido por CORS'));
     }
   },
