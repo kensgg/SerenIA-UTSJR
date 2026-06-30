@@ -1,14 +1,8 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER, // Tu correo de Gmail
-        pass: process.env.EMAIL_PASS  // Tu contraseña de aplicación de Gmail
-    }
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 /**
  * Envía el correo de recuperación de contraseña al alumno.
@@ -16,12 +10,11 @@ const transporter = nodemailer.createTransport({
  * @param {string} resetLink - Link completo con el token
  */
 export const sendPasswordResetEmail = async (correo, resetLink) => {
-    try {
-        const mailOptions = {
-            from: `"SerenIA" <${process.env.EMAIL_USER}>`,
-            to: correo,
-            subject: 'Recuperación de contraseña — SerenIA',
-            html: `
+    const { error } = await resend.emails.send({
+        from: 'SerenIA <no-reply@serenia.iokort.com>', // Cambiar por tu dominio verificado en Resend
+        to: [correo],
+        subject: 'Recuperación de contraseña — SerenIA',
+        html: `
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -109,12 +102,10 @@ export const sendPasswordResetEmail = async (correo, resetLink) => {
   </table>
 </body>
 </html>
-        `
-        };
+        `,
+    });
 
-        await transporter.sendMail(mailOptions);
-        console.log('[email.service] Correo enviado exitosamente a:', correo);
-    } catch (error) {
+    if (error) {
         console.error('[email.service] Error al enviar correo:', error);
         throw new Error('No se pudo enviar el correo de recuperación');
     }
