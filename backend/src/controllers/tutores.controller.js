@@ -82,7 +82,7 @@ export const obtenerAlumnosTutor = async (req, res) => {
             
             // Obtenemos los últimos puntajes individuales para las estadísticas rápidas
             const getUltimoPuntaje = (key) => {
-                const filt = resps.filter(r => r.cuestionarios?.nombre.toLowerCase().includes(key));
+                const filt = resps.filter(r => r.cuestionarios?.nombre?.toLowerCase().includes(key));
                 return filt.length ? filt[filt.length - 1].puntaje : 0;
             };
 
@@ -143,7 +143,7 @@ export const detalleAlumno = async (req, res) => {
 
         const obtenerUltimo = (tipo) => {
             if (!respuestas) return 0;
-            const f = respuestas.filter(r => r.cuestionarios?.nombre.toLowerCase().includes(tipo));
+            const f = respuestas.filter(r => r.cuestionarios?.nombre?.toLowerCase().includes(tipo));
             return f.length ? f[f.length - 1].puntaje : 0;
         }
 
@@ -193,7 +193,7 @@ export const historialAlumno = async (req, res) => {
         const historial = { ansiedad: [], depresion: [], estres: [] };
 
         data.forEach(r => {
-            const nombre = r.cuestionarios?.nombre.toLowerCase() || "";
+            const nombre = r.cuestionarios?.nombre?.toLowerCase() || "";
             const item = { fecha: r.fecha_respuesta, puntaje: r.puntaje };
 
             if(nombre.includes('ansiedad')) historial.ansiedad.push(item);
