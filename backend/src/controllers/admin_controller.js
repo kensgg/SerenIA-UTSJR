@@ -221,44 +221,112 @@ export const estadisticasGenerales = async (req, res) => {
     try {
         const { data: alumnos, error: errA } = await supabase
             .from('alumnos')
-            .select('id')
-        if (errA) return res.status(400).json(errA)
+            .select('id, genero, carrera_id, grupo_id');
+        if (errA) return res.status(400).json(errA);
 
         const { data: tutores, error: errT } = await supabase
             .from('tutores')
             .select('id')
-            .eq('rol', 'tutor')
-        if (errT) return res.status(400).json(errT)
+            .eq('rol', 'tutor');
+        if (errT) return res.status(400).json(errT);
 
         const { data: grupos, error: errG } = await supabase
             .from('grupos')
-            .select('id')
-        if (errG) return res.status(400).json(errG)
+            .select('id, nombre');
+        if (errG) return res.status(400).json(errG);
+
+        const { data: carreras, error: errC } = await supabase
+            .from('carreras')
+            .select('id, siglas');
+        if (errC) return res.status(400).json(errC);
 
         const { data: respuestas, error: errR } = await supabase
             .from('respuestas')
-            .select('puntaje, cuestionarios(nombre)')
-        if (errR) return res.status(400).json(errR)
+            .select('puntaje, fecha_respuesta, cuestionarios(id, nombre), alumnos(genero, carrera_id, grupo_id)');
+        if (errR) return res.status(400).json(errR);
 
-        let ansiedad = [], estres = [], depresion = []
+        // 1. Totales Básicos
+        const total_alumnos = alumnos.length;
+        const total_tutores = tutores.length;
+        const total_grupos = grupos.length;
+
+        // 2. Distribución por Género
+        const generoCount = { Masculino: 0, Femenino: 0, Otro: 0, 'No Especificado': 0 };
+        alumnos.forEach(a => {
+            const g = a.genero?.toLowerCase() || '';
+            if (g === 'masculino' || g === 'm') generoCount.Masculino++;
+            else if (g === 'femenino' || g === 'f') generoCount.Femenino++;
+            else if (g) generoCount.Otro++;
+            else generoCount['No Especificado']++;
+        });
+
+        // 3. Distribución por Carrera
+        const alumnosPorCarrera = {};
+        carreras.forEach(c => alumnosPorCarrera[c.siglas] = 0);
+        alumnosPorCarrera['S/C'] = 0;
+
+        alumnos.forEach(a => {
+            if (a.carrera_id) {
+                const c = carreras.find(car => car.id === a.carrera_id);
+                if (c) alumnosPorCarrera[c.siglas]++;
+                else alumnosPorCarrera['S/C']++;
+            } else {
+                alumnosPorCarrera['S/C']++;
+            }
+        });
+
+        // 4. Emociones y Timeline
+        const emocionesData = {
+            ansiedad: { bajo: 0, moderado: 0, alto: 0 },
+            estres: { bajo: 0, moderado: 0, alto: 0 },
+            depresion: { bajo: 0, moderado: 0, alto: 0 }
+        };
+
+        const respuestasPorSemana = {};
+
         respuestas.forEach(r => {
-            const nombre = r.cuestionarios?.nombre?.toLowerCase() ?? ''
-            if (nombre.includes('ansiedad')) ansiedad.push(r.puntaje)
-            if (nombre.includes('estres'))   estres.push(r.puntaje)
-            if (nombre.includes('depresion')) depresion.push(r.puntaje)
-        })
+            // Emociones
+            const nombre = r.cuestionarios?.nombre?.toLowerCase() || '';
+            // Máximo según cuestionario: estrés=42, ansiedad/depresión=63
+            const max = (r.cuestionarios?.id === 1 || nombre.includes('estr')) ? 42 : 63;
+            const porcentaje = (r.puntaje / max) * 100;
 
-        const prom = arr => arr.length ? Math.round(arr.reduce((a, b) => a + b, 0) / arr.length) : 0
+            let nivel = 'bajo';
+            if (porcentaje >= 50) nivel = 'alto'; 
+            else if (porcentaje >= 25) nivel = 'moderado';
+
+            if (nombre.includes('ansiedad')) emocionesData.ansiedad[nivel]++;
+            if (nombre.includes('estres') || nombre.includes('estr')) emocionesData.estres[nivel]++;
+            if (nombre.includes('depresion') || nombre.includes('depresi')) emocionesData.depresion[nivel]++;
+
+            // Timeline
+            if (r.fecha_respuesta) {
+                const d = new Date(r.fecha_respuesta);
+                // Agrupar por inicio de semana (Lunes)
+                const day = d.getDay() || 7; // Convertir domingo (0) a 7
+                d.setHours(-24 * (day - 1)); // Retroceder al Lunes
+                const weekKey = d.toISOString().split('T')[0];
+                respuestasPorSemana[weekKey] = (respuestasPorSemana[weekKey] || 0) + 1;
+            }
+        });
+
+        const sortedWeeks = Object.keys(respuestasPorSemana).sort();
+        const timeline = {
+            labels: sortedWeeks,
+            data: sortedWeeks.map(w => respuestasPorSemana[w])
+        };
 
         res.json({
-            total_alumnos:  alumnos.length,
-            total_tutores:  tutores.length,
-            total_grupos:   grupos.length,
-            promedio_ansiedad:  prom(ansiedad),
-            promedio_estres:    prom(estres),
-            promedio_depresion: prom(depresion),
-        })
+            total_alumnos,
+            total_tutores,
+            total_grupos,
+            genero: generoCount,
+            alumnos_por_carrera: alumnosPorCarrera,
+            emociones: emocionesData,
+            timeline: timeline
+        });
+
     } catch (err) {
-        res.status(500).json({ error: err.message })
+        res.status(500).json({ error: err.message });
     }
 }

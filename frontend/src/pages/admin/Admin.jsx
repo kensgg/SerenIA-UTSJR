@@ -10,6 +10,33 @@ import {
   getCarrerasAdmin, crearCarrera, editarCarrera,
   getEstadisticasAdmin
 } from '../../api/admin.api'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+} from 'chart.js';
+import { Line, Bar, Doughnut } from 'react-chartjs-2';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
 
 const TABS = [
   { name: 'Resumen', icon: BarChart3 },
@@ -151,46 +178,153 @@ export default function Admin() {
 
         {/* CONTENIDO: RESUMEN */}
         {tab === 'Resumen' && stats && (
-          <div className="space-y-12 animate-in fade-in duration-700">
+          <div className="space-y-8 animate-in fade-in duration-700">
+            {/* Tarjetas Principales */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
                 { label: 'Comunidad Total', value: stats.total_alumnos, sub: `${stats.total_grupos} Grupos`, color: 'bg-indigo-50 text-indigo-400' },
                 { label: 'Tutores Activos', value: tutores.filter(t=>t.rol==='tutor').length, sub: 'Cuerpo docente', color: 'bg-[#FEF3C7] text-amber-500' },
                 { label: 'Carreras', value: carreras.length, sub: 'Oferta educativa', color: 'bg-[#E8EDDF] text-[#8BA888]' },
               ].map(s => (
-                <div key={s.label} className="bg-white rounded-[38px] p-8 border border-gray-50 shadow-sm">
-                  <p className="text-[11px] font-black text-gray-300 uppercase tracking-widest mb-4">{s.label}</p>
-                  <p className="text-5xl font-black text-gray-800 tracking-tighter">{s.value}</p>
-                  <span className={`inline-block mt-4 px-4 py-1 rounded-full text-[11px] font-black uppercase tracking-tighter ${s.color}`}>
-                    {s.sub}
-                  </span>
+                <div key={s.label} className="bg-white rounded-[38px] p-8 border border-gray-50 shadow-sm flex flex-col justify-between">
+                  <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-4">{s.label}</p>
+                  <div>
+                    <p className="text-5xl font-black text-gray-800 tracking-tighter">{s.value}</p>
+                    <span className={`inline-block mt-4 px-4 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest ${s.color}`}>
+                      {s.sub}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
 
-            <section className="bg-white rounded-[45px] p-10 border border-gray-100 shadow-sm">
-              <h3 className="text-[12px] font-black text-gray-300 uppercase tracking-[0.2em] mb-10 flex items-center gap-2">
-                <ShieldCheck size={16} className="text-[#8BA888]"/> Salud Mental Institucional (Promedios)
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                {[
-                  { label: 'Ansiedad', value: stats.promedio_ansiedad, bar: 'bg-amber-300' },
-                  { label: 'Estrés', value: stats.promedio_estres, bar: 'bg-rose-300' },
-                  { label: 'Depresión', value: stats.promedio_depresion, bar: 'bg-indigo-300' },
-                ].map(s => (
-                  <div key={s.label}>
-                    <div className="flex justify-between items-end mb-3">
-                      <p className="text-xs font-black text-gray-600 uppercase tracking-tighter">{s.label}</p>
-                      <p className="text-2xl font-black text-gray-800 tracking-tighter">{Math.round(s.value)}%</p>
-                    </div>
-                    <div className="h-3 w-full bg-gray-50 rounded-full overflow-hidden border border-gray-100/50">
-                      <div className={`h-full rounded-full transition-all duration-1000 ${s.bar}`} style={{width: `${s.value}%`}}></div>
-                    </div>
-                    <p className="mt-2 text-[12px] font-bold text-gray-300 uppercase tracking-widest">Nivel {NIVEL(s.value)}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
+            {/* Gráficos Principales */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Timeline - Ocupa 2 columnas */}
+              <section className="bg-white rounded-[38px] p-8 border border-gray-100 shadow-sm lg:col-span-2 flex flex-col">
+                <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-6">Respuestas Semanales</h3>
+                <div className="flex-grow w-full h-[300px]">
+                  <Line 
+                    data={{
+                      labels: stats.timeline?.labels || [],
+                      datasets: [{
+                        label: 'Evaluaciones Completadas',
+                        data: stats.timeline?.data || [],
+                        borderColor: '#8BA888',
+                        backgroundColor: 'rgba(139, 168, 136, 0.2)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#8BA888',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                      }]
+                    }} 
+                    options={{
+                      responsive: true, maintainAspectRatio: false,
+                      plugins: { legend: { display: false } },
+                      scales: {
+                        y: { beginAtZero: true, grid: { display: true, color: '#f3f4f6' }, border: { display: false }, ticks: { stepSize: 1, color: '#9ca3af', font: { size: 10, weight: 'bold' } } },
+                        x: { grid: { display: false }, border: { display: false }, ticks: { color: '#9ca3af', font: { size: 10, weight: 'bold' } } }
+                      }
+                    }} 
+                  />
+                </div>
+              </section>
+
+              {/* Dona Género */}
+              <section className="bg-white rounded-[38px] p-8 border border-gray-100 shadow-sm flex flex-col">
+                <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-6">Distribución por Género</h3>
+                <div className="flex-grow w-full flex items-center justify-center min-h-[250px]">
+                  <Doughnut 
+                    data={{
+                      labels: ['Masculino', 'Femenino', 'Otro / No Espec.'],
+                      datasets: [{
+                        data: [
+                          stats.genero?.Masculino || 0, 
+                          stats.genero?.Femenino || 0, 
+                          (stats.genero?.Otro || 0) + (stats.genero?.['No Especificado'] || 0)
+                        ],
+                        backgroundColor: ['#818cf8', '#fb7185', '#d1d5db'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                      }]
+                    }}
+                    options={{
+                      responsive: true, maintainAspectRatio: false, cutout: '75%',
+                      plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20, font: { size: 10, weight: 'bold', family: 'sans-serif' }, color: '#6b7280' } }
+                      }
+                    }}
+                  />
+                </div>
+              </section>
+            </div>
+
+            {/* Segunda Fila de Gráficos */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Emociones (Niveles Altos/Críticos) */}
+              <section className="bg-white rounded-[38px] p-8 border border-gray-100 shadow-sm flex flex-col">
+                <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <ShieldCheck size={16} className="text-rose-400"/> Alertas por Emoción (Nivel Alto/Crítico)
+                </h3>
+                <p className="text-xs text-gray-400 mb-8 font-medium">Cantidad de alumnos que reportaron niveles significativos</p>
+                <div className="flex-grow w-full h-[250px]">
+                  <Bar 
+                    data={{
+                      labels: ['Ansiedad', 'Estrés', 'Depresión'],
+                      datasets: [{
+                        label: 'Casos Críticos/Altos',
+                        data: [
+                          stats.emociones?.ansiedad?.alto || 0,
+                          stats.emociones?.estres?.alto || 0,
+                          stats.emociones?.depresion?.alto || 0
+                        ],
+                        backgroundColor: ['#fcd34d', '#fda4af', '#a5b4fc'],
+                        borderRadius: 8,
+                        barPercentage: 0.6
+                      }]
+                    }}
+                    options={{
+                      responsive: true, maintainAspectRatio: false,
+                      plugins: { legend: { display: false } },
+                      scales: {
+                        y: { beginAtZero: true, grid: { color: '#f3f4f6' }, border: { display: false }, ticks: { stepSize: 1, color: '#9ca3af', font: { size: 10, weight: 'bold' } } },
+                        x: { grid: { display: false }, border: { display: false }, ticks: { color: '#6b7280', font: { size: 11, weight: 'bold' } } }
+                      }
+                    }}
+                  />
+                </div>
+              </section>
+
+              {/* Alumnos por Carrera */}
+              <section className="bg-white rounded-[38px] p-8 border border-gray-100 shadow-sm flex flex-col">
+                <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-8">Población por Carrera</h3>
+                <div className="flex-grow w-full h-[250px]">
+                  <Bar 
+                    data={{
+                      labels: Object.keys(stats.alumnos_por_carrera || {}).filter(k => stats.alumnos_por_carrera[k] > 0),
+                      datasets: [{
+                        label: 'Alumnos',
+                        data: Object.values(stats.alumnos_por_carrera || {}).filter(v => v > 0),
+                        backgroundColor: '#8BA888',
+                        borderRadius: 8,
+                        barPercentage: 0.5
+                      }]
+                    }}
+                    options={{
+                      responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+                      plugins: { legend: { display: false } },
+                      scales: {
+                        x: { beginAtZero: true, grid: { color: '#f3f4f6' }, border: { display: false }, ticks: { stepSize: 1, color: '#9ca3af', font: { size: 10, weight: 'bold' } } },
+                        y: { grid: { display: false }, border: { display: false }, ticks: { color: '#6b7280', font: { size: 10, weight: 'bold' } } }
+                      }
+                    }}
+                  />
+                </div>
+              </section>
+            </div>
           </div>
         )}
 
