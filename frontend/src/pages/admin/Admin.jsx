@@ -56,6 +56,14 @@ export default function Admin() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
 
+  // Filtros para Resumen
+  const [filtrosResumen, setFiltrosResumen] = useState({
+    carrera_id: '',
+    grupo_id: '',
+    fecha_inicio: '',
+    fecha_fin: ''
+  })
+
   // Estados de modales
   const [modalTutor, setModalTutor] = useState({ open: false, mode: 'crear', tutor: null })
   const [tutorForm, setTutorForm] = useState({ nombre: '', correo: '', password: '' })
@@ -70,17 +78,25 @@ export default function Admin() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
-  const cargarTodo = () => {
+  const cargarFijos = () => {
     setLoading(true)
-    Promise.all([getEstadisticasAdmin(), getTutores(), getTodosGrupos(), getCarrerasAdmin()])
-      .then(([s, t, g, c]) => {
-        setStats(s.data); setTutores(t.data); setGrupos(g.data); setCarreras(c.data)
+    Promise.all([getTutores(), getTodosGrupos(), getCarrerasAdmin()])
+      .then(([t, g, c]) => {
+        setTutores(t.data); setGrupos(g.data); setCarreras(c.data)
       })
       .catch(console.error)
       .finally(() => setLoading(false))
   }
 
-  useEffect(() => { cargarTodo() }, [])
+  const cargarTodo = () => {
+    cargarFijos()
+  }
+
+  useEffect(() => { cargarFijos() }, [])
+
+  useEffect(() => {
+    getEstadisticasAdmin(filtrosResumen).then(res => setStats(res.data)).catch(console.error);
+  }, [filtrosResumen])
 
   // --- Handlers Tutores ---
   const abrirCrearTutor = () => { 
@@ -179,14 +195,60 @@ export default function Admin() {
         {/* CONTENIDO: RESUMEN */}
         {tab === 'Resumen' && stats && (
           <div className="space-y-8 animate-in fade-in duration-700">
+            {/* Filtros */}
+            <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+              <div className="flex gap-4 w-full md:w-auto overflow-x-auto">
+                <select 
+                  value={filtrosResumen.carrera_id}
+                  onChange={(e) => setFiltrosResumen(prev => ({...prev, carrera_id: e.target.value, grupo_id: ''}))}
+                  className="bg-[#F9F9F7] border border-gray-200 rounded-[16px] px-4 py-2.5 text-xs font-bold text-gray-600 outline-none focus:ring-2 focus:ring-[#8BA888]/20"
+                >
+                  <option value="">Todas las Carreras</option>
+                  {carreras.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+                </select>
+                <select 
+                  value={filtrosResumen.grupo_id}
+                  onChange={(e) => setFiltrosResumen(prev => ({...prev, grupo_id: e.target.value}))}
+                  className="bg-[#F9F9F7] border border-gray-200 rounded-[16px] px-4 py-2.5 text-xs font-bold text-gray-600 outline-none focus:ring-2 focus:ring-[#8BA888]/20"
+                >
+                  <option value="">Todos los Grupos</option>
+                  {grupos.filter(g => !filtrosResumen.carrera_id || g.carreras?.id == filtrosResumen.carrera_id).map(g => (
+                    <option key={g.id} value={g.id}>{g.nombre}</option>
+                  ))}
+                </select>
+                <input 
+                  type="date"
+                  value={filtrosResumen.fecha_inicio}
+                  onChange={(e) => setFiltrosResumen(prev => ({...prev, fecha_inicio: e.target.value}))}
+                  className="bg-[#F9F9F7] border border-gray-200 rounded-[16px] px-4 py-2.5 text-xs font-bold text-gray-600 outline-none focus:ring-2 focus:ring-[#8BA888]/20"
+                  title="Fecha Inicio"
+                />
+                <input 
+                  type="date"
+                  value={filtrosResumen.fecha_fin}
+                  onChange={(e) => setFiltrosResumen(prev => ({...prev, fecha_fin: e.target.value}))}
+                  className="bg-[#F9F9F7] border border-gray-200 rounded-[16px] px-4 py-2.5 text-xs font-bold text-gray-600 outline-none focus:ring-2 focus:ring-[#8BA888]/20"
+                  title="Fecha Fin"
+                />
+              </div>
+              {Object.values(filtrosResumen).some(v => v !== '') && (
+                <button 
+                  onClick={() => setFiltrosResumen({carrera_id: '', grupo_id: '', fecha_inicio: '', fecha_fin: ''})}
+                  className="text-[10px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-600 flex items-center gap-1 bg-rose-50 px-3 py-1.5 rounded-full"
+                >
+                  <X size={12}/> Limpiar
+                </button>
+              )}
+            </div>
+
             {/* Tarjetas Principales */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
-                { label: 'Comunidad Total', value: stats.total_alumnos, sub: `${stats.total_grupos} Grupos`, color: 'bg-indigo-50 text-indigo-400' },
-                { label: 'Tutores Activos', value: tutores.filter(t=>t.rol==='tutor').length, sub: 'Cuerpo docente', color: 'bg-[#FEF3C7] text-amber-500' },
-                { label: 'Carreras', value: carreras.length, sub: 'Oferta educativa', color: 'bg-[#E8EDDF] text-[#8BA888]' },
+                { label: 'Alumnos Filtrados', value: stats.total_alumnos, sub: 'Total en la selección', color: 'bg-indigo-50 text-indigo-400' },
+                { label: 'Grupos Involucrados', value: stats.total_grupos, sub: 'Grupos activos', color: 'bg-[#FEF3C7] text-amber-500' },
+                { label: 'Total de Evaluaciones', value: stats.total_respuestas || 0, sub: 'Cuestionarios completados', color: 'bg-[#E8EDDF] text-[#8BA888]' },
               ].map(s => (
-                <div key={s.label} className="bg-white rounded-[38px] p-8 border border-gray-50 shadow-sm flex flex-col justify-between">
+                <div key={s.label} className="bg-white rounded-[38px] p-8 border border-gray-50 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
                   <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-4">{s.label}</p>
                   <div>
                     <p className="text-5xl font-black text-gray-800 tracking-tighter">{s.value}</p>
@@ -198,17 +260,20 @@ export default function Admin() {
               ))}
             </div>
 
-            {/* Gráficos Principales */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Timeline - Ocupa 2 columnas */}
-              <section className="bg-white rounded-[38px] p-8 border border-gray-100 shadow-sm lg:col-span-2 flex flex-col">
-                <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-6">Respuestas Semanales</h3>
+            {/* Gráficos Principales Simplificados */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Timeline */}
+              <section className="bg-white rounded-[38px] p-8 border border-gray-100 shadow-sm flex flex-col">
+                <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center justify-between">
+                  Evolución de Evaluaciones
+                  <span className="text-[10px] font-bold text-gray-300">En el tiempo</span>
+                </h3>
                 <div className="flex-grow w-full h-[300px]">
                   <Line 
                     data={{
                       labels: stats.timeline?.labels || [],
                       datasets: [{
-                        label: 'Evaluaciones Completadas',
+                        label: 'Evaluaciones',
                         data: stats.timeline?.data || [],
                         borderColor: '#8BA888',
                         backgroundColor: 'rgba(139, 168, 136, 0.2)',
@@ -233,44 +298,14 @@ export default function Admin() {
                 </div>
               </section>
 
-              {/* Dona Género */}
-              <section className="bg-white rounded-[38px] p-8 border border-gray-100 shadow-sm flex flex-col">
-                <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-6">Distribución por Género</h3>
-                <div className="flex-grow w-full flex items-center justify-center min-h-[250px]">
-                  <Doughnut 
-                    data={{
-                      labels: ['Masculino', 'Femenino', 'Otro / No Espec.'],
-                      datasets: [{
-                        data: [
-                          stats.genero?.Masculino || 0, 
-                          stats.genero?.Femenino || 0, 
-                          (stats.genero?.Otro || 0) + (stats.genero?.['No Especificado'] || 0)
-                        ],
-                        backgroundColor: ['#818cf8', '#fb7185', '#d1d5db'],
-                        borderWidth: 0,
-                        hoverOffset: 4
-                      }]
-                    }}
-                    options={{
-                      responsive: true, maintainAspectRatio: false, cutout: '75%',
-                      plugins: {
-                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20, font: { size: 10, weight: 'bold', family: 'sans-serif' }, color: '#6b7280' } }
-                      }
-                    }}
-                  />
-                </div>
-              </section>
-            </div>
-
-            {/* Segunda Fila de Gráficos */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Emociones (Niveles Altos/Críticos) */}
               <section className="bg-white rounded-[38px] p-8 border border-gray-100 shadow-sm flex flex-col">
-                <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-                  <ShieldCheck size={16} className="text-rose-400"/> Alertas por Emoción (Nivel Alto/Crítico)
+                <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 flex items-center justify-between">
+                  <span className="flex items-center gap-2"><ShieldCheck size={16} className="text-rose-400"/> Alertas Altas/Críticas</span>
+                  <span className="text-[10px] font-bold text-rose-300 bg-rose-50 px-2 py-1 rounded-full">Atención Prioritaria</span>
                 </h3>
-                <p className="text-xs text-gray-400 mb-8 font-medium">Cantidad de alumnos que reportaron niveles significativos</p>
-                <div className="flex-grow w-full h-[250px]">
+                <p className="text-xs text-gray-400 mb-8 font-medium">Alumnos con niveles significativos en la selección actual</p>
+                <div className="flex-grow w-full h-[300px]">
                   <Bar 
                     data={{
                       labels: ['Ansiedad', 'Estrés', 'Depresión'],
@@ -283,7 +318,7 @@ export default function Admin() {
                         ],
                         backgroundColor: ['#fcd34d', '#fda4af', '#a5b4fc'],
                         borderRadius: 8,
-                        barPercentage: 0.6
+                        barPercentage: 0.5
                       }]
                     }}
                     options={{
@@ -292,33 +327,6 @@ export default function Admin() {
                       scales: {
                         y: { beginAtZero: true, grid: { color: '#f3f4f6' }, border: { display: false }, ticks: { stepSize: 1, color: '#9ca3af', font: { size: 10, weight: 'bold' } } },
                         x: { grid: { display: false }, border: { display: false }, ticks: { color: '#6b7280', font: { size: 11, weight: 'bold' } } }
-                      }
-                    }}
-                  />
-                </div>
-              </section>
-
-              {/* Alumnos por Carrera */}
-              <section className="bg-white rounded-[38px] p-8 border border-gray-100 shadow-sm flex flex-col">
-                <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-8">Población por Carrera</h3>
-                <div className="flex-grow w-full h-[250px]">
-                  <Bar 
-                    data={{
-                      labels: Object.keys(stats.alumnos_por_carrera || {}).filter(k => stats.alumnos_por_carrera[k] > 0),
-                      datasets: [{
-                        label: 'Alumnos',
-                        data: Object.values(stats.alumnos_por_carrera || {}).filter(v => v > 0),
-                        backgroundColor: '#8BA888',
-                        borderRadius: 8,
-                        barPercentage: 0.5
-                      }]
-                    }}
-                    options={{
-                      responsive: true, maintainAspectRatio: false, indexAxis: 'y',
-                      plugins: { legend: { display: false } },
-                      scales: {
-                        x: { beginAtZero: true, grid: { color: '#f3f4f6' }, border: { display: false }, ticks: { stepSize: 1, color: '#9ca3af', font: { size: 10, weight: 'bold' } } },
-                        y: { grid: { display: false }, border: { display: false }, ticks: { color: '#6b7280', font: { size: 10, weight: 'bold' } } }
                       }
                     }}
                   />

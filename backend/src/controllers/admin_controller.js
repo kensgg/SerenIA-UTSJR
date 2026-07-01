@@ -219,9 +219,13 @@ export const editarCarrera = async (req, res) => {
 
 export const estadisticasGenerales = async (req, res) => {
     try {
-        const { data: alumnos, error: errA } = await supabase
-            .from('alumnos')
-            .select('id, genero, carrera_id, grupo_id');
+        const { carrera_id, grupo_id, fecha_inicio, fecha_fin } = req.query;
+
+        let alumnosQuery = supabase.from('alumnos').select('id, genero, carrera_id, grupo_id');
+        if (carrera_id) alumnosQuery = alumnosQuery.eq('carrera_id', carrera_id);
+        if (grupo_id) alumnosQuery = alumnosQuery.eq('grupo_id', grupo_id);
+
+        const { data: alumnos, error: errA } = await alumnosQuery;
         if (errA) return res.status(400).json(errA);
 
         const { data: tutores, error: errT } = await supabase
@@ -230,9 +234,11 @@ export const estadisticasGenerales = async (req, res) => {
             .eq('rol', 'tutor');
         if (errT) return res.status(400).json(errT);
 
-        const { data: grupos, error: errG } = await supabase
-            .from('grupos')
-            .select('id, nombre');
+        let gruposQuery = supabase.from('grupos').select('id, nombre');
+        if (carrera_id) gruposQuery = gruposQuery.eq('carrera_id', carrera_id);
+        if (grupo_id) gruposQuery = gruposQuery.eq('id', grupo_id);
+
+        const { data: grupos, error: errG } = await gruposQuery;
         if (errG) return res.status(400).json(errG);
 
         const { data: carreras, error: errC } = await supabase
@@ -240,10 +246,22 @@ export const estadisticasGenerales = async (req, res) => {
             .select('id, siglas');
         if (errC) return res.status(400).json(errC);
 
-        const { data: respuestas, error: errR } = await supabase
-            .from('respuestas')
+        let respuestasQuery = supabase.from('respuestas')
             .select('puntaje, fecha_respuesta, cuestionarios(id, nombre), alumnos(genero, carrera_id, grupo_id)');
+        
+        if (fecha_inicio) respuestasQuery = respuestasQuery.gte('fecha_respuesta', fecha_inicio);
+        if (fecha_fin) respuestasQuery = respuestasQuery.lte('fecha_respuesta', fecha_fin);
+
+        const { data: respuestasRaw, error: errR } = await respuestasQuery;
         if (errR) return res.status(400).json(errR);
+
+        // Filtrar respuestas localmente por carrera y grupo
+        const respuestas = respuestasRaw.filter(r => {
+            if (!r.alumnos) return false;
+            if (carrera_id && r.alumnos.carrera_id != carrera_id) return false;
+            if (grupo_id && r.alumnos.grupo_id != grupo_id) return false;
+            return true;
+        });
 
         // 1. Totales Básicos
         const total_alumnos = alumnos.length;
@@ -260,7 +278,7 @@ export const estadisticasGenerales = async (req, res) => {
             else generoCount['No Especificado']++;
         });
 
-        // 3. Distribución por Carrera
+        // 3. Distribución por Carrera (Opcional, pero se mantiene para consistencia si no hay filtro de carrera)
         const alumnosPorCarrera = {};
         carreras.forEach(c => alumnosPorCarrera[c.siglas] = 0);
         alumnosPorCarrera['S/C'] = 0;
@@ -320,6 +338,7 @@ export const estadisticasGenerales = async (req, res) => {
             total_alumnos,
             total_tutores,
             total_grupos,
+            total_respuestas: respuestas.length,
             genero: generoCount,
             alumnos_por_carrera: alumnosPorCarrera,
             emociones: emocionesData,

@@ -17,4 +17,4 @@ export const crearCarrera      = (data)      => axiosClient.post('/admin/carrera
 export const editarCarrera     = (id, data)  => axiosClient.put(`/admin/carreras/${id}`, data)
 
 // Estadísticas
-export const getEstadisticasAdmin = ()       => axiosClient.get('/admin/estadisticas')
+export const getEstadisticasAdmin = (filters = {}) => axiosClient.get('/admin/estadisticas', { params: filters })
